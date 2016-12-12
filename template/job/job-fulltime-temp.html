@@ -1,0 +1,330 @@
+<!-- add new job form template
+=========================================-->
+<script type="text/template" id="add-new-job-temp">
+	<div class="added-job-form" id="added-job-form-<%= formID %>">
+	<hr/>
+		<div class="form-group">
+				<a href="javascript:void(0);" class="col-md-1 col-md-offset-11" 
+					onclick="JobFulltimeGroupPost.removeSaveAddMore(<%= formID %>)">
+						<i class="fa fa-times fa-5" aria-hidden="true"></i>
+					</a>
+		</div>
+		<div class="form-group">
+	        <label for="location" class="col-md-4 control-label">
+	        	Location</label>
+	        <div class="col-md-6 location-<%= formID %>">
+			</div>
+		</div>
+		<div class="form-group">
+	        <label for="job_title" class="col-md-4 control-label">
+	        	Job Title</label>
+	        <div class="col-md-6">
+	            <input type="text" class="form-control" name="jobs[job-<%= formID %>][job_title]" id="job_title">
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label for="job_desc" class="col-md-4 control-label">
+	        	Job Description</label>
+	        <div class="col-md-6">
+	            <textarea class="form-control" name="jobs[job-<%= formID %>][job_desc]" 
+	        			id="job_desc" cols="30" rows="4"></textarea>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label for="industry" class="col-md-4 control-label">
+	        	Industry</label>
+	        <div class="col-md-6 industry-<%= formID %>">
+	        </div>
+		</div>
+		<div class="form-group">
+	        <label for="salary" class="col-md-4 control-label">
+	        	Salary</label>
+	        <div class="col-md-2">
+	            <input type="text" class="form-control number-only" name="jobs[job-<%= formID %>][salary]" id="salary">
+	        </div>
+	        <div class="col-md-2 currency-<%= formID %>">
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label for="industry" class="col-md-4 control-label">
+	        	Years Experiece</label>
+	        <div class="col-md-3">
+	            <input type="text" class="form-control number-only" name="jobs[job-<%= formID %>][yr_exp]" id="yr_exp">
+	        </div>
+		</div>
+	    <div class="form-group">
+	    	<div class="btn-group col-md-4 col-md-offset-4" data-toggle="buttons">
+			  <label class="btn btn-primary btn-post-status-publish">
+			    <input type="radio" name="jobs[job-<%= formID %>][post_status_id]"
+			    	autocomplete="off" value="1"> Publish
+			  </label>
+			  <label class="btn btn-primary btn-post-status-draft active">
+			    <input type="radio" name="jobs[job-<%= formID %>][post_status_id]"
+			    	autocomplete="off" value="2" checked> Draft
+			  </label>
+			</div>
+	    </div>
+	</div>
+</script>
+
+<!-- Fulltime Preview Template
+=========================================-->
+<script type="text/template" id="fulltime-preview">
+	<center><h2>Preview</h2></center>
+	<div class="col-md-12">
+		<!---- Job Fulltime add new job form
+		======================================-->
+		<form name="form_preview_fulltime" class="form-horizontal" role="form" novalidate>
+	    	<div class="col-md-12">
+	        	<h2><%= headline %></h2>
+	        </div>
+	        <div class="col-md-4 col-sm-4 col-xs-4">
+	        	<img src="<%= apiUrl %>files/<%= (file_name) ? file_name : 'no-img.jpg' %>">
+	        </div>
+	        <div class="col-md-8 col-sm-8 col-xs-8" style="text-align: justify;">
+	        	<p style="padding-left: 5.5em;">
+            		<%= headlineDesc %>
+            	</p>
+	        </div>
+	        <% _.each(jobs, function(job) { %>
+		        <div class="col-md-12">
+		        	<hr/>
+		        	<p>
+		        		<h3><%= job.job_title %></h3>
+	            		<b>Location: <%= job.location_text.toString().replace(/,/g, ", ") %></b>
+	            		<br/><br/>
+	            		<b>Posted: </b>
+	            		<br/>
+	            		<b>Salary: </b><%= job.salary + " " + job.currency_text %>
+	            		<br/>
+	            		<b>Experience: </b><%= job.yr_exp %>
+	            		<br/>
+	            		<b>Valid Until: </b><%= validUntil %>
+	            		<br/>
+	            		<b>Industry: </b><%= job.industry_text.toString().replace(/,/g, ", ") %>
+	            		<br/><br/>
+	            		<h3>Job Description</h3>
+	            		<p class="text-justify">
+	            			<%= job.job_desc %>
+	            		</p>
+		        	</p>
+		        </div>
+	        <% } ); %>
+	        <div class="col-md-12">
+	        	<hr/>
+	        </div>
+	  		<div class="col-md-12 col-md-offset-10">
+	            <div class="form-group">
+	                <a href="javascript:void(0);" class="btn btn-primary" 
+	                	onclick="JobFulltimeGroupPost.fulltimePreviewBack();">Back</a>
+	                <a href="javascript:void(0);" class="btn btn-primary" onclick="JobFulltimeGroupPost.posting(this);">
+	                    Post
+	                </a>
+	            </div>
+	        </div>
+	    </form>
+	</div>
+</script>
+
+<!-- Single Post Template
+=========================================-->
+<script type="text/template" id="single-post-temp">
+
+    <div class="form-group">
+        <label for="location" class="col-md-4 control-label">
+        	Location</label>
+        <div class="col-md-6 location-0">
+		</div>
+	</div>
+              	
+    <div class="form-group">
+        <label for="" class="col-md-4 control-label">
+        	Job Photo</label>
+        <div class="col-md-8 single-job-fileupload-con">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="hiring_duration_from" class="col-md-4 col-sm-4 col-xs-4 control-label">
+        	Hiring Duration</label>
+        <div class="col-md-3 col-sm-3 col-xs-3">
+            <input type="text" class="form-control datepicker" name="hiring_duration_from" 
+            		id="hiring_duration_from" placeholder="From">
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-3">
+        	<input type="text" class="form-control datepicker" name="hiring_duration_to" 
+        			id="hiring_duration_to" placeholder="To">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="job_title" class="col-md-4 control-label">
+        	Job Title</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="jobs[job-0][job_title]">
+        </div>
+    </div>
+
+	<div class="form-group">
+        <label for="job_desc" class="col-md-4 control-label">
+        	Job Description</label>
+        <div class="col-md-6">
+            <textarea class="form-control" name="jobs[job-0][job_desc]" 
+        			cols="30" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="industry" class="col-md-4 control-label">
+        	Industry</label>
+        <div class="col-md-6 industry-0">
+        </div>
+	</div>
+
+	<div class="form-group">
+        <label for="salary" class="col-md-4 control-label">
+        	Salary</label>
+        <div class="col-md-2">
+            <input type="text" class="form-control number-only" name="jobs[job-0][salary]" id="salary">
+        </div>
+        <div class="col-md-2 currency-0">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="industry" class="col-md-4 control-label">
+        	Years Experiece</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control number-only" name="jobs[job-0][yr_exp]" id="yr_exp">
+        </div>
+	</div>
+
+    <div class="form-group">
+    	<div class="btn-group col-md-4 col-md-offset-4 btn-group-post-status" data-toggle="buttons">
+		  <label class="btn btn-primary btn-post-status-publish">
+		    <input type="radio" name="jobs[job-0][post_status_id]" 
+		    	autocomplete="off" value="1"> Publish
+		  </label>
+		  <label class="btn btn-primary btn-post-status-draft active">
+		    <input type="radio" name="jobs[job-0][post_status_id]"
+		    	autocomplete="off" value="2" checked> Draft
+		  </label>
+		</div>
+    </div>
+
+</script>
+
+<!-- Group post Template
+=========================================-->
+<script type="text/template" id="group-post-temp">
+    <div class="form-group">
+        <label for="headline" class="col-md-4 control-label">
+        	Job Headline</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="headline" id="headline">
+        </div>
+    </div>
+  	
+    <div class="form-group">
+        <label for="headline_desc" class="col-md-4 control-label">
+        	Job Headline Description</label>
+        <div class="col-md-6">
+            <textarea class="form-control" name="headline_desc" 
+            	id="headline_desc" cols="30" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="" class="col-md-4 control-label">
+        	Job Headline Photo</label>
+        <div class="col-md-8 group-job-fileupload-con">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="hiring_duration_from" class="col-md-4 col-sm-4 col-xs-4 control-label">
+        	Hiring Duration</label>
+        <div class="col-md-3 col-sm-3 col-xs-3">
+            <input type="text" class="form-control datepicker" name="hiring_duration_from" 
+            		id="hiring_duration_from" placeholder="From">
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-3">
+        	<input type="text" class="form-control datepicker" name="hiring_duration_to" 
+        			id="hiring_duration_to" placeholder="To">
+        </div>
+    </div>
+
+    <br/>
+
+    <!-- add and save job form
+    =============================-->
+    <div class="added-job-form-con">		
+   		<div class="added-job-form" id="added-job-form-0">
+			<hr/>
+				<div class="form-group">
+				<a href="javascript:void(0);" class="col-md-1 col-md-offset-11" 
+						onclick="JobFulltimeGroupPost.removeSaveAddMore(0)">
+						<i class="fa fa-times fa-5" aria-hidden="true"></i>
+				</a>
+				</div>
+				<div class="form-group">
+			        <label for="location" class="col-md-4 control-label">
+			        	Location</label>
+			        <div class="col-md-6 location-0">
+					</div>
+				</div>
+				<div class="form-group">
+			        <label for="job_title" class="col-md-4 control-label">
+			        	Job Title</label>
+			        <div class="col-md-6">
+			            <input type="text" class="form-control" name="jobs[job-0][job_title]" id="job_title">
+			        </div>
+			    </div>
+			    <div class="form-group">
+			        <label for="job_desc" class="col-md-4 control-label">
+			        	Job Description</label>
+			        <div class="col-md-6">
+			            <textarea class="form-control" name="jobs[job-0][job_desc]" 
+			        			id="job_desc" cols="30" rows="4"></textarea>
+			        </div>
+			    </div>
+			    <div class="form-group">
+			        <label for="industry" class="col-md-4 control-label">
+			        	Industry</label>
+			        <div class="col-md-6 industry-0">
+			        </div>
+				</div>
+				<div class="form-group">
+			        <label for="salary" class="col-md-4 control-label">
+			        	Salary</label>
+			        <div class="col-md-2">
+			            <input type="text" class="form-control number-only" name="jobs[job-0][salary]" id="salary">
+			        </div>
+			        <div class="col-md-2 currency-0">
+			        </div>
+			    </div>
+			    <div class="form-group">
+			        <label for="industry" class="col-md-4 control-label">
+			        	Years Experiece</label>
+			        <div class="col-md-3">
+			            <input type="text" class="form-control number-only" name="jobs[job-0][yr_exp]" id="yr_exp">
+			        </div>
+				</div>
+
+			    <div class="form-group">
+			    	<div class="btn-group col-md-4 col-md-offset-4" data-toggle="buttons">
+					  <label class="btn btn-primary btn-post-status-publish">
+					    <input type="radio" name="jobs[job-0][post_status_id]"
+					    	autocomplete="off" 
+					    	value="1"> Publish
+					  </label>
+					  <label class="btn btn-primary btn-post-status-draft active">
+					    <input type="radio" name="jobs[job-0][post_status_id]"
+					    	autocomplete="off" value="2" checked> Draft
+					  </label>
+					</div>
+			    </div>
+
+			</div>
+   	</div><!-- END - add and save job form -->
+</script>

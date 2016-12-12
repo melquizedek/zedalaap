@@ -1,0 +1,220 @@
+<script type="text/template" id="search-form-temp">
+<div class="row">
+	
+	<form name="<%= formName %>" class="form-horizontal">
+	
+		<input type="hidden" name="employment_type_id" value="<%= employmentTypeId %>"/>
+		<input type="hidden" name="post-status-id" value="<%= postStatusId %>"/>
+
+			<div class="form-group col-md-12">
+				<div class="col-md-5">
+					<input type="text" class="form-control" 
+						name="keywords" id="" placeholder="Keywords">
+				</div>
+			</div>
+	
+			<div class="form-group col-md-12">
+				<label for="hiring_duration_from" class="col-md-2 control-label">
+					Date Of Validity</label>
+				<div class="col-md-2">
+					<input type="text" class="form-control datepicker" name="validity-from" 
+							id="validity-from" placeholder="From" value="<%= validityStart %>">
+				</div>
+				<div class="col-md-2">
+					<input type="text" class="form-control datepicker" name="validity-to" 
+							id="validity-to" placeholder="To" value="<%= validityEnd %>">
+				</div>
+			</div>
+	
+			<div class="col-md-12">
+				<button type="submit" class="btn btn-primary" id="<%= btnId %>">
+					Search
+				</button>
+			</div>
+	
+		</form>
+</div>
+</script>
+
+<script type="text/template" id="job-list-temp">
+	<div class="row">
+		<div class="col-md-12">
+				<strong><%= numJobs %> jobs found</strong>
+		</div>
+	</div>
+	<br/>
+	<div class="row">
+		<%
+			_.each(jobList, function(job, key) {
+		%>
+		<div class="panel panel-default" id="job-group-<%= job.job_group_id %>">
+			<div class="panel-body">
+				<div class="col-md-8">
+					<div class="col-md-12">
+						<h2><%= job.job_group_name %></h2>
+					</div>
+					<div class=col-md-5>
+					<% if (job.cover_photo) { %>
+						<img src="api/v1/public/files/<%= job.cover_photo %>" alt="">
+					<% } else { %>
+						<img src="api/v1/public/files/no-img.jpg" alt="">
+					<% } %>
+					</div>
+					<div class="col-md-7">
+						<p style="text-align: justify"><%= job.description %></p>
+					</div>
+				</div>
+			
+				<div class="col-md-4">
+					<div class="col-md-12"><h1>&nbsp;</h1></div>
+					
+					<div class="col-md-12">
+						<ul style="list-style: none">
+							<li><strong>Created By: </strong></li>
+							<li><strong>Created Date: </strong>&nbsp;&nbsp;<%= job.date_created %></li>
+							<li><strong>Hiring Duration: </strong>&nbsp;&nbsp;<%= job.duration_start %>  &nbsp; - &nbsp; <%= job.duration_end %></li>
+						</ul>
+					</div>
+					
+					<div class="col-md-12">
+						<div class="form-group">
+							<div>
+								
+								<% if (jobPostStatus == 1) { %>
+									<a href="javascript:void(0);" class="btn btn-primary btn-closed-<%= job.job_group_id %>" 
+										onclick="JobList.closeJob('.btn-closed-<%= job.job_group_id %>', '<%= job.job_group_id %>');">
+										Close Job
+									</a>
+								<% } %>
+
+								<% if (jobPostStatus == 2) { %>
+									<a href="javascript:void(0);" class="btn btn-primary btn-publish-<%= job.job_group_id %>" 
+										onclick="JobList.publish('.btn-publish-<%= job.job_group_id %>', '<%= job.job_group_id %>');">
+										Publish Job
+									</a>
+								<% } %>
+
+								<a href="javascript:void(0);" class="btn btn-primary" 
+									onclick="JobList.preview('<%= job.job_group_id %>', '<%= jobPostStatus %>');">
+									Preview
+								</a>
+
+								<a href="javascript:void(0);" class="btn btn-primary" 
+									onclick="JobList.editPost('<%= job.job_group_id %>', '<%= jobPostStatus %>')">
+									Edit Posting
+								</a>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<% _.each(job.jobs, function(availableJob) { %>
+					<div class="row job-<%= availableJob.job_post_id %>">
+						<div class="col-md-12"><hr/></div>
+						<div class="col-md-5">
+							<ul style="list-style: none;">
+								<li><h4><%= availableJob.job_title %></h4></li>
+								<li></li>
+								<li><strong>Salary: </strong><%= availableJob.salary %> <%= availableJob.currency_code %></li>
+								<li><strong>Experience: </strong><%= availableJob.yr_exp %></li>
+								<li><strong>Industry: </strong><%= availableJob.job_industries %></li>
+								<li>&nbsp;</li>
+								<% if (availableJob.post_status == 1) { %>
+								<li>
+									<a href="javascript:void(0);" data-job-post-id="<%= availableJob.job_post_id %>" class="btn btn-primary btn-applicants-view">View 0 applicants</a>
+									<a href="javascript:void(0);" data-job-post-id="<%= availableJob.job_post_id %>" class="btn btn-primary btn-shorlisted-view">View 0 shortlisted applicants</a>
+								</li>
+								<% } %>
+							</ul>
+						</div>
+						<div class="col-md-7">
+							<p><%= availableJob.job_description %></p>
+						</div>
+					</div>
+				<% }) %>
+				
+
+			</div><!-- Panel Body - End -->
+		</div>
+		
+	<% }) %>
+	
+	</div>
+</script>
+
+
+<!-- Fulltime Preview Template
+=========================================-->
+<script type="text/template" id="preview-temp">
+	<center><h2>Preview</h2></center>
+	<div class="col-md-12">
+		<!---- Job Fulltime add new job form
+		======================================-->
+	    	<div class="col-md-12">
+	        	<h3><%= job_group_name %></h3>
+	        </div>
+	        <div class="col-md-4 col-sm-4 col-xs-4">
+	        	<% if (cover_photo) { %>
+	        		<img src="api/v1/public/files/<%= cover_photo %>" alt="">
+	        	<% } else { %>
+	        		<img src="api/v1/public/files/no-img.jpg" alt="">
+	        	<% } %>
+	        </div>
+	        <div class="col-md-8 col-sm-8 col-xs-8">
+	        	<p class="text-justify">
+            		<%= description %>
+            	</p>
+	        </div>
+	        <% _.each(jobs, function(job) { %>
+		        <div class="col-md-12">
+		        	<hr/>
+		        	<p>
+		        		<h3><%= job.job_title %></h3>
+	            		<b>Location: <%= job.country_location.toString().replace(/,/g, ", ") %></b>
+	            		<br/><br/>
+	            		<b>Posted: </b><%= job.posted_date %>
+	            		<br/>
+	            		<b>Salary: </b><%= job.salary + " " + job.currency_code %>
+	            		<br/>
+	            		<b>Experience: </b><%= job.yr_exp %>
+	            		<br/>
+	            		<b>Valid Until: </b><%= duration_end %>
+	            		<br/>
+	            		<b>Industry: </b><%= (job.job_industries) ? job.job_industries.toString().replace(/,/g, ", ") : "" %>
+	            		<br/>
+
+	            		<% if (employment_type_id == 2 || employment_type_id == 3) { %>
+	            			<br/>
+	            			<b>Duration: </b><%=  job.job_duration_start + ' - ' + job.job_duration_end %>
+	            			<br/>
+	            		<% } %>
+
+	            		<% if (employment_type_id == 2) { %>
+	            			<br/>
+	            			<b><%= makeDurationDate(job.day_time, 'database') %></b>
+	            			<br/>
+	            		<% } %>
+
+	            		<br/>
+	            		<h3>Job Description</h3>
+	            		<p class="text-justify">
+	            			<%= job.job_description %>
+	            		</p>
+		        	</p>
+		        </div>
+	        <% } ); %>
+	        <div class="col-md-12">
+	        	<hr/>
+	        </div>
+	  		<div class="col-md-12 col-md-offset-10">
+	            <div class="form-group">
+	                <a href="javascript:void(0);" class="btn btn-primary" 
+	                	onclick="JobList.fulltimePreviewBack();">Back</a>
+	                <!--<a href="javascript:void(0);" class="btn btn-primary" onclick="JobFulltimeGroupPost.posting(this);">
+	                    Post
+	                </a>-->
+	            </div>
+	        </div>
+	</div>
+</script>

@@ -1,0 +1,86 @@
+/* ----------------------------------------------------------------
+	Custom CSS
+
+	Add all your Custom Styled CSS here for New Styles or
+	Overwriting Default Theme Styles for Better Hanlding Updates
+-----------------------------------------------------------------*/
+
+.bottommargin-xsm { margin-bottom: 20px !important; }
+
+.bottommargin-xxsm { margin-bottom: 10px !important; }
+
+.has-error .sm-form-control {
+    border-color: #a94442;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+
+.danger-font {
+	color: red;
+}
+
+.disabled-font-color {
+	color: #111;
+}
+
+.modal-sm {
+    width: 350px !important;
+}
+
+.datatable-sm-width {
+    width: 50px !important;
+}
+
+.datatable-md-width {
+    width: 120px !important;
+}
+
+.datatable-xxl-width {
+    width: 200px !important;
+}
+
+.sm-select-form-control {
+    background-color: #ffffff;
+    background-image: none;
+    border-radius: 0 !important;
+    color: #555555;
+    display: block;
+    font-size: 15px;
+    height: 38px;
+    line-height: 1.42857;
+    transition: border-color 0.15s ease-in-out 0s;
+    width: 100%;
+
+}
+
+.sm-select-form-control .btn{
+    border-radius: 0px !important;
+    height: 40px;
+}
+
+.button-custom {
+    margin-right: 5px !important;
+}
+
+.entry-preview-jobs {
+    position: relative;
+    margin: 0 0 5px;
+    padding: 0 0 50px;
+}
+
+.sm-form-control {
+    background-color: #ffffff;
+    border-color: #cccccc;
+    color: #333333;
+}
+
+.row-class {
+    margin-left: 44% !important;
+}
+
+.delete-jobs {
+    margin-right: 20px;
+}
+
+.icon-delete-jobs {
+    margin-left: 90%;
+}

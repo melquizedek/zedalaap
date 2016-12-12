@@ -1,0 +1,362 @@
+<script type="text/template" id="common-form-temp-01">
+	<div class="form-group">
+        <label for="headline" class="col-md-4 control-label">
+        	Job Headline</label>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="headline" id="headline">
+        </div>
+    </div>
+  	
+    <div class="form-group">
+        <label for="headline_desc" class="col-md-4 control-label">
+        	Job Headline Description</label>
+        <div class="col-md-6">
+            <textarea class="form-control" name="headline_desc" 
+            	id="headline_desc" cols="30" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="" class="col-md-4 control-label">
+        	Job Headline Photo</label>
+        <div class="col-md-8 group-job-fileupload-con">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="hiring_duration_from" class="col-md-4 col-sm-4 col-xs-4 control-label">
+        	Hiring Duration</label>
+        <div class="col-md-3 col-sm-3 col-xs-3">
+            <input type="text" class="form-control datepicker" name="hiring_duration_from" 
+            		id="hiring_duration_from" placeholder="From">
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-3">
+        	<input type="text" class="form-control datepicker" name="hiring_duration_to" 
+        			id="hiring_duration_to" placeholder="To">
+        </div>
+    </div>
+
+    <br/>
+</script>
+
+<script type="text/template" id="file-uploader-temp">
+	<span class="btn btn-success fileinput-button">
+	    <i class="glyphicon glyphicon-plus"></i>
+	    <span>Add Files or Drag Here...</span>
+	    
+	    <input class="fileupload" id="<%= fileId %>" type="file" name="files" multiple>
+	</span>
+	<br>
+	<br>
+	
+	<div class="progress jq-upload-progbar" style="display: none">
+	    <div class="progress-bar progress-bar-success"></div>
+	</div>
+	
+	<div class="files">
+		<p class="file-to-upload"></p>
+	</div>
+</script>
+
+<script type="text/template" id="btn-post-type-temp">
+	<div class="btn-group" data-toggle="buttons">
+	  <label class="btn btn-primary active" id="btn-group-job">
+	    <input type="radio" name="post_type_id" id="posttype-group-post" 
+	    	autocomplete="off" value="1" checked> Post Group of Jobs
+	  </label>
+	  <label class="btn btn-primary" id="btn-single-job">
+	    <input type="radio" name="post_type_id" id="posttype-single-post" 
+	    	autocomplete="off" value="2"> Post a Single Job
+	  </label>
+	</div>
+</script>
+
+<script type="text/template" id="panel-control-button-temp">
+
+	<div class="form-group btn-job-group-post">
+        <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
+            <a href="index.php" class="btn btn-primary">
+                Cancel
+            </a>
+            <a href="javascript:void(0);" 
+            	class="btn btn-primary btn-save-more-addmore"
+                onclick="<%= callback %>">
+                Save & Add more
+            </a>
+            <button type="submit" class="btn btn-primary btn-preview" 
+            	id="btn-group-preview">
+                Preview
+            </button>
+        </div>
+    </div>
+
+    <div class="form-group btn-job-single-post" style="display: none">
+        <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
+            <a href="index.php" class="btn btn-primary">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary btn-preview">
+                Preview
+            </button>
+        </div>
+    </div>
+
+</script>
+
+<!-- Select input text Template
+=========================================-->
+<script type="text/template" id="select-input-text">
+    <input type="hidden" name="<%= inputName %>" value="<%= value %>" 
+        class="input-text-<%= formID %> input-text-<%= selectType %>-<%= index %> <%= addedClass %>"  />
+</script>
+
+<!-- Select input text json Template
+=========================================-->
+<script type="text/template" id="select-input-text-json">
+    <input type="hidden" name="<%= inputName %>" value="<%= value %>" 
+        class="input-text-json-<%= formID %> input-text-json-<%= selectType %>-<%= index %> <%= addedClass %>"  />
+</script>
+
+<script type="text/template" id="select-location-temp">
+    <select name="<%= name %>" class="<%= className %>" id="<%= id %>"
+        data-live-search="true" data-form-unique-id="<%= formUniqueId %>" multiple>
+        <% if (options) { %>
+
+            <%= options %>
+        <% } else { %>
+
+            <% _.each(locations, function(location) {  %>
+                <option value="<%= location.country_id %>" 
+                    data-country-name="<%= location.country_name %>">
+                    <%= location.country_name %>
+                </option>
+            <% }) %>
+
+        <% } %>
+    </select>
+</script>
+
+<!-- select picker for industries
+========================================-->
+<script type="text/template" id="select-industry-temp">
+    <select name="<%= name %>" class="<%= className %>" id="<%= id %>"
+        data-live-search="true" data-form-unique-id="<%= formUniqueId %>" multiple>
+        <% if (options) { %>
+
+            <%= options %>
+
+        <% } else { %>
+
+            <% _.each(industries, function(industry) {  %>
+                <option value="<%= industry.industry_id %>" 
+                    data-country-name="<%= industry.industry %>">
+                    <%= industry.industry %>
+                </option>
+            <% }) %>
+
+        <% } %>
+    </select>
+</script>
+
+<!-- select picker for currencies
+========================================-->
+<script type="text/template" id="select-currency-temp">
+    <select name="<%= name %>" class="<%= className %>" id="<%= id %>"
+        data-live-search="true" data-form-unique-id="<%= formUniqueId %>">
+        <option value=""> Select a Currency </option>
+        <% if (options) { %>
+
+            <%= options %>
+        <% } else { %>
+
+            <% _.each(currencies, function(currency) {  %>
+                <option value="<%= currency.currency_id %>" 
+                    data-country-name="<%= currency.currency_code %>">
+                    <%= currency.currency_code %> - <%= currency.currency_name %>
+                </option>
+            <% }) %>
+        <% } %>
+    </select>
+</script>
+
+<script type="text/template" id="error-msg-temp">
+    <div class="alert alert-danger validation-msg" role="alert">
+        <ul class="list-unstyled" style="text-align: justify; font-weight: bold;">
+        <% _.each(errorMsgs, function(msg) { %>
+            <li><%= msg %></li>
+        <% })%>
+        </ul>
+    </div>
+</script>
+
+<script type="text/template" id="select-for-editing-temp">
+    <select name="<%= selectName %>" id="<%= selectId %>"
+        data-live-search="true" data-form-unique-id="<%= formUniqueId %>" 
+        class="<%= (selectClass) ? selectClass : 'selectpicker' %>" <%= isMultiple  ? "multiple" : "" %> >
+
+        <%= options %>
+
+    </select>
+</script>
+
+<!-- file uploader template
+==========================-->
+<script type="text/template" id="file-uploader-temp">
+    <span class="btn btn-success fileinput-button">
+        <i class="glyphicon glyphicon-plus"></i>
+        <span>Add Files or Drag Here...</span>
+        
+        <input class="fileupload" id="<%= fileId %>" type="file" name="files" multiple>
+    </span>
+    <br>
+    <br>
+    
+    <div class="progress jq-upload-progbar" style="display: none">
+        <div class="progress-bar progress-bar-success"></div>
+    </div>
+    
+    <div class="files">
+        <p class="file-to-upload"></p>
+    </div>
+</script>
+
+<script type="text/template" id="date-duration-temp">
+	<label for="industry" class="col-md-4 control-label">
+        Duration</label>
+    <div class="col-md-2">
+        <input type="text" class="form-control" data-provide="datepicker"
+            name="jobs[job-<%= formID %>][duration_from]" placeholder="From">
+    </div>
+    <div class="col-md-2">
+        <input type="text" class="form-control" data-provide="datepicker"
+            name="jobs[job-<%= formID %>][duration_to]" placeholder="To">
+    </div>
+</script>
+
+<script type="text/template" id="view-applicants-temp">
+    <h1><%= applicants.length %>
+    <% if (type === "shortlisted") { %>
+        Shortlisted Applicants for this Job
+    <% } %>
+    <% if (type === "applied") { %>
+        Applicants for this Job
+    <% } %>
+    </h1>
+    <h3><%= job.job_title %></h3>
+    <div class="row">
+        <div class="col-md-12">
+            <hr/>
+            <p>
+            <b>Location: </b><%= Helper.removeSpecChar(job.country_location) %>
+            <br/>
+            <b>Posted: <%= job.posted_date %></b>
+            <br/>
+            <b>Salary: </b><%= job.salary + " " + job.currency_code %>
+            <br/>
+            <b>Experience: </b><%= job.yr_exp %>
+            <br/>
+            <b>Valid Until: </b><%= job.duration_end %>
+            <br/>
+            <b>Industry: </b><%= job.job_industries.replace(/,/g, ", ") %>
+            <br/>
+            
+            <% if (job.employment_type_id == 2 || job.employment_type_id == 3) { %>
+                <br/>
+                <b>Duration: </b><%= job.job_duration_start + ' - ' + job.job_duration_end %>
+            <% } %>
+
+            <% if (job.employment_type_id == 2) { %>
+                <br/>
+                <b><%= makeDurationDate(job.day_time, 'database') %></b>
+            <% } %>
+            </p>
+            
+            <h3>Job Description</h3>
+
+            <div class="text-justify">
+                <p>
+                    <%= job.job_description %>
+                </p>
+            </div>
+
+            <hr/>
+
+                <% _.each(applicants, function(applicant) { %>
+                    <div class="col-md-12">
+                        <div class="col-md-5">
+                            <div class="panel panel-default">
+
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        <%= applicant.first_name %> <%= applicant.last_name %>
+                                    </h3>
+                                </div>
+
+                                <div class="panel-body" style="overflow: auto">
+                                    
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            <strong>Position</strong> : <%= applicant.position %>
+                                        </li>
+                                        <li>
+                                            <strong>Skills</strong> : <%= applicant.skills %>
+                                        </li>
+                                        <li>
+                                            <strong>Current Location</strong> : <%= applicant.location %>
+                                        </li>
+                                        <li>
+                                            <strong>Nationality</strong> : <%= applicant.nationality %>
+                                        </li>
+                                    </ul> 
+                                    
+                                </div>
+
+                                <div class="panel-footer" style="text-align: center">
+                                    <button type="button" class="btn btn-primary btn-sm" data-user-id="<%= applicant.user_id %>">
+                                        View Details
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+    </div>
+        <div class="col-md-12"><hr/></div>
+        <div class="col-md-2 col-md-offset-10">
+            <a href="javascript:void(0)"
+                class="btn btn-primary applicant-view-back"
+                onclick="<%= backCallback %>">Back</a>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/template" id="alert-msg-temp">
+
+    <div class="modal fade alert-msg" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><%=title%></h4>
+          </div>
+          <div class="modal-body" style="text-align:center">
+            <p>
+                <%=message%>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <% if (okBtn) { %>
+            <button type="button" class="btn btn-primary" 
+                onclick="<%=backFunction%>;" data-dismiss="modal">
+                <%=okBtn%></button>
+            <% } %>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">
+                <%= (closeBtn) ? closeBtn : 'Continue' %></button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</script>
