@@ -98,7 +98,7 @@
 					                            </div>
 					                        </div>
 
-					                        <div class="form-group btn-job-single-post" style="display: none">
+					                        <div class="form-group btn-job-single-post hidden">
 					                            <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
 					                                <a href="index.php" class="btn btn-primary">
 					                                    Cancel
@@ -116,7 +116,7 @@
 
 							<!-- Preview
 					        ================ -->
-					        <div class="col-md-12 fulltime-preview-con" style="display: none">
+					        <div class="col-md-12 fulltime-preview-con hidden">
 					        </div><!-- END - Preview -->
 
 					        <div class="alert-msg-temp-con"></div>
@@ -142,7 +142,6 @@
 	<!-- load needed job underscore tmeplate
 	============================================= -->
 	<?php include 'template/job/common-temp.html'; ?>
-	<?php include 'template/job/job-fulltime-temp.html'; ?>
 
 	<?php
 		include 'include/js.php';

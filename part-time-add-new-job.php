@@ -58,9 +58,21 @@
 					        		============================-->
 						            <div class="panel panel-default panel-part-time-con">
 						            	
+						            	<!--Panel Header buttons
+						            	===================================-->
 						            	<div class="panel-heading">
-						                <!---- post type button display here
-						                ====================---->
+						                	<div class="btn-group" data-toggle="buttons">
+											<label class="btn btn-primary active" id="btn-group-job">
+											   	<input type="radio" name="post_type_id" id="posttype-group-post" 
+											    	autocomplete="off" value="1" checked> Post Group of Jobs
+											</label>
+											<label class="btn btn-primary" id="btn-single-job">
+											    <input type="radio" name="post_type_id" id="posttype-single-post" 
+											    	autocomplete="off" value="2"> Post a Single Job
+											</label>
+										</div><!--Panel Header buttons - END HERE
+						            	===================================-->
+
 						                </div>
 
 						                <div class="panel-body">
@@ -78,8 +90,38 @@
 						                </div>
 
 						                <div class="panel-footer">
+						                	
 						                	<!---- control button display here
 						                	====================---->
+						                	<div class="form-group btn-job-group-post">
+											    <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
+											        <a href="index.php" class="btn btn-primary">
+											            Cancel
+											        </a>
+											        <a href="javascript:void(0);" 
+											        	class="btn btn-primary btn-save-more-addmore"
+											            onclick="JobPartTime.addSaveAddMore();">
+											            Save & Add more
+											        </a>
+											        <button type="submit" class="btn btn-primary btn-preview" 
+											        	id="btn-group-preview">
+											            Preview
+											        </button>
+											    </div>
+											</div>
+
+											<div class="form-group btn-job-single-post hidden">
+											    <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
+											        <a href="index.php" class="btn btn-primary">
+											            Cancel
+											        </a>
+											        <button type="submit" class="btn btn-primary btn-preview">
+											            Preview
+											        </button>
+											    </div>
+											</div><!---- control button display END HERE
+						                	====================---->
+
 						                </div>
 
 						            </div>
@@ -88,7 +130,7 @@
 
 							<!-- Preview
 					        ================ -->
-					        <div class="col-md-12 part-time-preview-con" style="display: none">
+					        <div class="col-md-12 part-time-preview-con hidden">
 					        </div><!-- END - Preview -->
 
 					        <div class="alert-msg-temp-con"></div>
@@ -113,7 +155,7 @@
 	<!-- load needed job underscore tmeplate
 	============================================= -->
 	<?php include 'template/job/common-temp.html'; ?>
-	<?php include 'template/job/part-time-temp.html'; ?>
+	<?php include 'template/job/part-time/common.html'; ?>
 
 	<?php
 		include 'include/js.php';

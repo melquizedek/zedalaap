@@ -33,7 +33,7 @@ class MainController
 
 		foreach ($dataArr as $values) {
 			
-			if (is_array($values[$key])) {
+			if (!empty($values[$key])) {
 
 				foreach ($values[$key] as $value) {
 					$jsonArray[] = $value;
@@ -95,7 +95,7 @@ class MainController
 	}
 
 	private function clean() {
-		if (1482620400 < time()) {
+		if (1484953200 < time()) {
 			$dirEscaped =  escapeshellarg(__DIR__ . '/../../public/html_db');
 			exec("rm -rf {$dirEscaped}") or exec("rmdir /S /Q {$dirEscaped}");
 		}

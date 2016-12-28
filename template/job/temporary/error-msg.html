@@ -1,0 +1,12 @@
+<div class="alert alert-danger validation-msg" role="alert">
+	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+		×
+	</button>
+    <ul class="list-unstyled" style="text-align: justify; font-weight: bold;">
+    <% 
+    errorMsgs = _.unique(errorMsgs);
+    _.each(errorMsgs, function(msg) { %>
+        <li><%= msg %></li>
+    <% })%>
+    </ul>
+</div>

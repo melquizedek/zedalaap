@@ -73,7 +73,7 @@ class JobValidator
 
 						if ($key === "yr_exp") {
 							$errorMsg['errorMsg'][] = 
-								$this->isEmptyStr($val, "Year of experiences is required.", $formNum);
+								$this->isNumber($val, "Year of experiences is required.", $formNum);
 						}
 
 						if ($employment_type_id == 2)
@@ -181,6 +181,14 @@ class JobValidator
 
 		if (!array_key_exists($key, $data)) {
 
+			return $msg;
+		}
+	}
+
+	public function isNumber($val, $msg, $formNum) {
+		$str = trim($val);
+
+		if (!is_numeric($val)) {
 			return $msg;
 		}
 	}

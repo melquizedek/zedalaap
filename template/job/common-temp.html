@@ -58,63 +58,18 @@
 	</div>
 </script>
 
-<script type="text/template" id="btn-post-type-temp">
-	<div class="btn-group" data-toggle="buttons">
-	  <label class="btn btn-primary active" id="btn-group-job">
-	    <input type="radio" name="post_type_id" id="posttype-group-post" 
-	    	autocomplete="off" value="1" checked> Post Group of Jobs
-	  </label>
-	  <label class="btn btn-primary" id="btn-single-job">
-	    <input type="radio" name="post_type_id" id="posttype-single-post" 
-	    	autocomplete="off" value="2"> Post a Single Job
-	  </label>
-	</div>
-</script>
-
-<script type="text/template" id="panel-control-button-temp">
-
-	<div class="form-group btn-job-group-post">
-        <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
-            <a href="index.php" class="btn btn-primary">
-                Cancel
-            </a>
-            <a href="javascript:void(0);" 
-            	class="btn btn-primary btn-save-more-addmore"
-                onclick="<%= callback %>">
-                Save & Add more
-            </a>
-            <button type="submit" class="btn btn-primary btn-preview" 
-            	id="btn-group-preview">
-                Preview
-            </button>
-        </div>
-    </div>
-
-    <div class="form-group btn-job-single-post" style="display: none">
-        <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
-            <a href="index.php" class="btn btn-primary">
-                Cancel
-            </a>
-            <button type="submit" class="btn btn-primary btn-preview">
-                Preview
-            </button>
-        </div>
-    </div>
-
-</script>
-
 <!-- Select input text Template
 =========================================-->
 <script type="text/template" id="select-input-text">
     <input type="hidden" name="<%= inputName %>" value="<%= value %>" 
-        class="input-text-<%= formID %> input-text-<%= selectType %>-<%= index %> <%= addedClass %>"  />
+        class="input-text-<%= selectType %>-<%= formID %>-<%= index %> <%= addedClass %>"  />
 </script>
 
 <!-- Select input text json Template
 =========================================-->
 <script type="text/template" id="select-input-text-json">
     <input type="hidden" name="<%= inputName %>" value="<%= value %>" 
-        class="input-text-json-<%= formID %> input-text-json-<%= selectType %>-<%= index %> <%= addedClass %>"  />
+        class="input-text-json-<%= selectType %>-<%= formID %>-<%= index %> <%= addedClass %>"  />
 </script>
 
 <script type="text/template" id="select-location-temp">
@@ -179,16 +134,6 @@
     </select>
 </script>
 
-<script type="text/template" id="error-msg-temp">
-    <div class="alert alert-danger validation-msg" role="alert">
-        <ul class="list-unstyled" style="text-align: justify; font-weight: bold;">
-        <% _.each(errorMsgs, function(msg) { %>
-            <li><%= msg %></li>
-        <% })%>
-        </ul>
-    </div>
-</script>
-
 <script type="text/template" id="select-for-editing-temp">
     <select name="<%= selectName %>" id="<%= selectId %>"
         data-live-search="true" data-form-unique-id="<%= formUniqueId %>" 
@@ -220,7 +165,7 @@
     </div>
 </script>
 
-<script type="text/template" id="date-duration-temp">
+<!--<script type="text/template" id="date-duration-temp">
 	<label for="industry" class="col-md-4 control-label">
         Duration</label>
     <div class="col-md-2">
@@ -231,7 +176,7 @@
         <input type="text" class="form-control" data-provide="datepicker"
             name="jobs[job-<%= formID %>][duration_to]" placeholder="To">
     </div>
-</script>
+</script>-->
 
 <script type="text/template" id="view-applicants-temp">
     <h1><%= applicants.length %>
@@ -333,7 +278,6 @@
 
 
 <script type="text/template" id="alert-msg-temp">
-
     <div class="modal fade alert-msg" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -352,11 +296,14 @@
                 onclick="<%=backFunction%>;" data-dismiss="modal">
                 <%=okBtn%></button>
             <% } %>
-            <button type="button" class="btn btn-primary" data-dismiss="modal">
-                <%= (closeBtn) ? closeBtn : 'Continue' %></button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" 
+                    <% if(closeFunction) { %> 
+                        onclick="<%= closeFunction %>" 
+                    <% } %>
+                ><%= (closeBtn) ? closeBtn : 'Continue' %>    
+            </button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
 </script>

@@ -9,9 +9,9 @@ var ShortListed = (function($) {
 		$(window).on('load', function() {
 
 			var searchKeys = localStorage.getItem('searchKeys');
+			searchKeys = searchKeys.replace(/([\[-\]-"])/g, "")
 
-			//console.log(searchKeys);
-			$('.shorlisted-con').html(AJAX_LOADER);
+			$('.shorlisted-con').html('<center><i class="fa fa-spin fa-5x fa-circle-o-notch" ></i></center>');
 
 			$.ajax({
 				type: 'POST',

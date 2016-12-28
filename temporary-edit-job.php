@@ -81,7 +81,38 @@
 
 						                </div>
 
-						                <div class="panel-footer"></div>
+						                <div class="panel-footer">
+						                	<!---- control button display here
+						                	====================---->
+						                	<div class="form-group btn-job-group-post">
+											    <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
+											        <a href="index.php" class="btn btn-primary">
+											            Cancel
+											        </a>
+											        <a href="javascript:void(0);" 
+											        	class="btn btn-primary btn-save-more-addmore"
+											            onclick="JobTemporary.addSaveAddMore();">
+											            Save & Add more
+											        </a>
+											        <button type="submit" class="btn btn-primary btn-preview" 
+											        	id="btn-group-preview">
+											            Preview
+											        </button>
+											    </div>
+											</div>
+
+											<div class="form-group btn-job-single-post" style="display: none">
+											    <div class="col-md-8 col-xs-9 col-md-offset-6 col-sm-offset-6 col-xs-offset-3">
+											        <a href="index.php" class="btn btn-primary">
+											            Cancel
+											        </a>
+											        <button type="submit" class="btn btn-primary btn-preview">
+											            Preview
+											        </button>
+											    </div>
+											</div><!---- control button display END HERE
+						                	====================---->
+						                </div>
 
 						            </div>
 					            </form>
@@ -115,7 +146,6 @@
 	<!-- load needed job underscore tmeplate
 	============================================= -->
 	<?php include 'template/job/common-temp.html'; ?>
-	<?php include 'template/job/temporary-temp.html'; ?>
 
 	<?php
 		include 'include/js.php';

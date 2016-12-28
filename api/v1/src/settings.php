@@ -19,9 +19,6 @@ return [
         // Database
         'db' => [
             'host' => 'localhost', // To change port, just add it afterwards like localhost:8889
-            /*'dbname' => 'id262099_jobs_db', // DB name or SQLite path
-            'username' => 'id262099_zed',
-            'password' => 'ZedAlaap2016'*/
             'dbname' => 'jobs', // DB name or SQLite path
             'username' => 'root',
             'password' => ''

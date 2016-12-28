@@ -133,6 +133,8 @@ class JobController extends MainController
 
 			foreach ($formData['jobs'] as $job) {
 				
+				if (!isset($job['job_title']) || !isset($job['industry_text_json'])) continue;
+
 				$job_post_id = isset($job['job_post_id']) ? $job['job_post_id'] : null;
 
 				$job_post = array(
@@ -214,7 +216,7 @@ class JobController extends MainController
 
 	public function getAppliedApplicant($request, $response, $args) {
 		
-		sleep(1);
+		//sleep(1);
 
 		$result = array(
 			'success' => false,
@@ -479,8 +481,6 @@ class JobController extends MainController
 			$json_file_id = $postData['json_file_id'];	
 			$group_job_id = $postData['job_group_id'];
 			$jobs = $postData['jobs'];
-
-			//$this->deleteFile($json_file_id . '.json', 'html_db');
 			
 			$params = array(':job_group_id' => $group_job_id);	
 			$where = "i_job_object.job_group_id = :job_group_id";
@@ -520,6 +520,8 @@ class JobController extends MainController
 
 			$result = array('success' => true, 
 				'data' => "Job has been successfully updated.");
+
+			$this->deleteFile($json_file_id . '.json', 'html_db');
 
 		} catch (PDOException $e) {
 

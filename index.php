@@ -1,6 +1,3 @@
-<?php
-//echo '<pre>'; var_dump($_SERVER);exit;
-?>
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
 <head>

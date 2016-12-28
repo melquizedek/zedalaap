@@ -97,7 +97,7 @@ var selectPicker = (function() {
 			selectClass : ".select-location";
 
 		var selectName = $.trim(selectName).length ? 
-			selectName : "location_id";
+			selectName : "location";
 
 		var selectId = "location-" + uniqueId;
 
@@ -130,7 +130,7 @@ var selectPicker = (function() {
 			selectClass : ".select-industry";
 
 		var selectName = $.trim(selectName).length ? 
-			selectName : "industry_id";
+			selectName : "industry";
 
 		var selectId = "industry-" + uniqueId;
 
@@ -180,7 +180,7 @@ var selectPicker = (function() {
 
 		Template.get('#select-currency-temp', selectCon, jsonData);
 
-		console.log(selectPicker.isEdit);
+		//console.log(selectPicker.isEdit);
 
 		if (!selectPicker.isEdit) { 
 			$('#added-job-form-' + uniqueId)
@@ -224,7 +224,8 @@ var selectPicker = (function() {
 
     			$('.currency-id-' + formId).remove();
 
-    			$(inputTextCon).append('<input type="hidden" name="jobs[job-' + formId + '][currency_id]" class="currency-id-' + formId + '" value="'+ opt.attr('value') +'"/>');
+    			$(inputTextCon)
+    				.append('<input type="hidden" name="jobs[job-' + formId + '][currency_id]" class="currency-id-' + formId + '" value="'+ opt.attr('value') +'"/>');
 
     			Template.get('#select-input-text', inputTextCon,
     				{ inputName : 'jobs[job-' + formId + '][' + inputName + ']', 
@@ -264,8 +265,8 @@ var selectPicker = (function() {
 
 	    		if (!newValue)
 	    		{	
-	    			$('.input-text-' + formId + '.input-text-' + selectType + '-' + index).remove();
-	    			$('.input-text-json-' + formId + '.input-text-json-' + selectType + '-' + index).remove();
+	    			$('.input-text-' + selectType + '-' +  formId + '-' + index).remove();
+	    			$('.input-text-json-' + selectType + '-' +  formId + '-' + index).remove();
 	    			$('.input-' + selectType + '-' + formId + '-' + index).remove();
 	    			opt.removeAttr('selected');
 	    		} 
@@ -313,24 +314,264 @@ var selectPicker = (function() {
 })($);
 $(selectPicker.init);
 
-
 function resetAddedFormId() 
 {
 	//reset selectPickers container
     $.each($('.added-job-form'), function(i, elem) {
-
+    	var newFormId = i;
         var addedForm = $(this);
         var id = _.last(addedForm.attr("id").split("-"));
         
-        addedForm.attr("id", "added-job-form-" + i);
+        addedForm
+        	.attr("id", "added-job-form-" + i)
+        	.removeClass("added-job-form-" + id)
+        	.addClass("added-job-form-" + i);
+
+        addedForm
+        	.find('textarea.job-desc-' + id)
+        	.removeClass('job-desc-' + id)
+        	.addClass('job-desc-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][job_desc]');
+
+        addedForm
+        	.find('input.job-title-' + id)
+        	.removeClass('job-title-' + id)
+        	.addClass('job-title-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][job_title]');
+
+        addedForm
+        	.find('input.salary-' + id)
+        	.removeClass('salary-' + id)
+        	.addClass('salary-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][salary]');
+
+        addedForm
+        	.find('input.yr-exp-' + id)
+        	.removeClass('yr-exp-' + id)
+        	.addClass('yr-exp-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][yr_exp]');
+
+        addedForm.find('.duration-from-' + id)
+			.removeClass('duration-from-' + id)
+        	.addClass('duration-from-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][duration_from]');
+
+        addedForm.find('.duration-to-' + id)
+			.removeClass('duration-to-' + id)
+        	.addClass('duration-to-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][duration_to]');
+
+        addedForm.find('.publish-' + id)
+        	.removeClass('publish-' + id)
+        	.addClass('publish-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][post_status_id]');
+
+        addedForm.find('.draft-' + id)
+        	.removeClass('draft-' + id)		
+        	.addClass('draft-' + newFormId)
+        	.attr('name', 'jobs[job-' + newFormId + '][post_status_id]');
+
+        if (addedForm.find('.date-range-' + id)) {
+
+        	addedForm.find('.date-range-' + id)
+        		.removeClass('date-range-' + id)
+        		.addClass('date-range-' + newFormId);
+
+        	addedForm.find('.day-time-con-' + id)
+        		.removeClass('day-time-con-' + id)
+        		.addClass('day-time-con-' + newFormId);
+
+        	addedForm.find('.date-time-from-' + id)
+        		.removeClass('date-time-from-' + id + ' date-range-input-' + id)
+        		.addClass('date-time-from-' + newFormId + ' date-range-input-' + newFormId)
+        		.attr('name', 'jobs[job-' + newFormId + '][duration_from]');
+
+        	addedForm.find('.date-time-to-' + id)
+        		.removeClass('date-time-to-' + id + ' date-range-input-' + id)
+        		.addClass('date-time-to-' + newFormId + ' date-range-input-' + newFormId)
+        		.attr('name', 'jobs[job-' + newFormId + '][duration_to]');
+
+     		addedForm.find('input[class^=time-input-enable-' + id + ']').each(function() {
+     			var $this = $(this);
+     			var dataIndex = $this.data('index').split('-');
+     			var timestamp = dataIndex[0];
+     			var addedTimeId = dataIndex[1];
+
+     			$this
+     				.removeClass('time-input-enable-' + id + '-' + timestamp + '-' + addedTimeId)
+     				.addClass('time-input-enable-' + newFormId + '-' + timestamp + '-' + addedTimeId)
+     				.attr({
+     					'name' : 'jobs[job-' + newFormId + '][durations][' + timestamp + '][duration_time_enable]',
+     					'onclick' : 
+     						'DateHelper.disabledDayTime(this, ' + newFormId + ', ' + timestamp + ')'
+     				});
+     		});
+
+     		addedForm.find('a[class^=btn-add-newsched-' + id + ']').each(function(index) {
+     			var $this = $(this);
+     			var dataInfo = $this.data('addNewschedInfo').split('|');
+     			var timestamp = dataInfo[0], label = dataInfo[1], dateStr = dataInfo[2], 
+     				day = dataInfo[3], addedTimeId = dataInfo[4];
+
+     			$this
+     				.removeClass('btn-add-newsched-' + id + '-' + timestamp + '-' + addedTimeId)
+     				.addClass('btn-add-newsched-' + newFormId + '-' + timestamp + '-' + addedTimeId);
+
+     			$this.attr('onclick',
+     					"DateHelper.addTimeRange(" + newFormId + ","
+     					+ timestamp + ","
+                        + "'.time-input-" + newFormId + "-" + timestamp + "',"
+                        + "'" + label + "',"
+                        + "'" + dateStr + "',"
+                        + "'" + day + "');");
+
+                addedForm.find('.time-input-' + id + '-' + timestamp).each(
+                	function() {
+
+	                	var $this = $(this);
+	                	var dataInfo = $this.data('info').split('|');
+	                	var timestamp = dataInfo[1];
+	                	var addedTimeId = dataInfo[2];
+
+	                	$this.removeClass('time-input-' + id + '-' + timestamp + ' time-input-con-' + id + '-' + timestamp + '-' + addedTimeId);
+	                	$this.addClass('time-input-' + newFormId + '-' + timestamp + ' time-input-con-' + newFormId + '-' + timestamp + '-' + addedTimeId)
+	                	$this.attr('data-info', newFormId + '|' + timestamp + '|' + addedTimeId);
+
+	                	addedForm.find('.hidden-datestr-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.removeClass('hidden-datestr-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.addClass('hidden-datestr-' + newFormId + '-' + timestamp + '-' + addedTimeId)
+	                		.attr('name', 'jobs[job-' + newFormId + '][durations][' + timestamp + '][date]');
+
+	                	addedForm.find('.hidden-timestamp-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.removeClass('hidden-timestamp-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.addClass('hidden-timestamp-' + newFormId + '-' + timestamp + '-' + addedTimeId)
+	                		.attr('name', 'jobs[job-' + newFormId + '][durations][' + timestamp + '][day]');
+
+	                	addedForm.find('.time-input-from-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.removeClass('time-input-from-' + id + '-' + timestamp + ' time-input-from-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.addClass('time-input-from-' + newFormId + '-' + timestamp + ' time-input-from-' + newFormId + '-' + timestamp + '-' + addedTimeId)
+	                		.attr('name', 'jobs[job-' + newFormId + '][durations][' + timestamp + '][duration_time_from][]');
+
+	                	addedForm.find('.time-input-to-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.removeClass('time-input-to-' + id + '-' + timestamp + ' time-input-to-' + id + '-' + timestamp + '-' + addedTimeId)
+	                		.addClass('time-input-to-' + newFormId + '-' + timestamp + ' time-input-to-' + newFormId + '-' + timestamp + '-' + addedTimeId)
+	                		.attr('name', 'jobs[job-' + newFormId + '][durations][' + timestamp + '][duration_time_to][]');
+	                });
+
+     		});
+
+        }
+
         $('.location-' + id).removeClass('location-' + id).addClass('location-' + i);
-        $('.industry-' + id).removeClass('industry-' + id).addClass('industry-' + i);
+        
+        $.each(addedForm.find('input[class^=input-location-' + id + ']'), 
+        	function(i, elem) {
+
+	        	var textLocationElem = $(this);
+	        	var optIndex = _.last(textLocationElem.attr('class').split('-'));
+	        	
+	        	console.log(id + ' change to ', newFormId, optIndex);
+
+	        	addedForm
+	        		.find('input.input-location-' + id + '-' + optIndex)
+	        		.removeClass('input-location-' + id + '-' + optIndex)
+	        		.addClass('input-location-' + newFormId + '-' + optIndex)
+	        		.attr('name', 'jobs[job-' + newFormId + '][location][]');
+
+	        	addedForm
+	        		.find('input.input-text-location-' + id + '-' + optIndex)
+	        		.removeClass('input-text-location-' + id + '-' + optIndex)
+	        		.addClass('input-text-location-' + newFormId + '-' + optIndex)
+	        		.attr('name', 'jobs[job-' + newFormId + '][location_text][]');
+
+	        	addedForm
+	        		.find('input.input-text-json-location-' + id + '-' + optIndex)
+	        		.removeClass('input-text-json-location-' + id + '-' + optIndex)
+	        		.addClass('input-text-json-location-' + newFormId + '-' + optIndex)
+	        		.attr('name', 'jobs[job-' + newFormId + '][location_text_json][]');
+
+	        });
+
+		$('.industry-' + id).removeClass('industry-' + id).addClass('industry-' + i);
+
+        $.each(addedForm.find('input[class^=input-industry-' + id + ']'), 
+        	function(i, elem) {
+        		
+	        	var textIndustryElem = $(this);
+	        	var optIndex = _.last(textIndustryElem.attr('class').split('-'));
+	        	
+	        	console.log(id + ' change to ', newFormId, optIndex);
+
+	        	addedForm
+	        		.find('input.input-industry-' + id + '-' + optIndex)
+	        		.removeClass('input-industry-' + id + '-' + optIndex)
+	        		.addClass('input-industry-' + newFormId + '-' + optIndex)
+	        		.attr('name', 'jobs[job-' + newFormId + '][industry][]');
+
+	        	addedForm.find('input.input-text-industry-' + id + '-' + optIndex)
+	        		.removeClass('input-text-industry-' + id + '-' + optIndex)
+	        		.addClass('input-text-industry-' + newFormId + '-' + optIndex)
+	        		.attr('name', 'jobs[job-' + newFormId + '][industry_text][]');
+
+	        	addedForm.find('input.input-text-json-industry-' + id + '-' + optIndex)
+	        		.removeClass('input-text-json-industry-' + id + '-' + optIndex)
+	        		.addClass('input-text-json-industry-' + newFormId + '-' + optIndex)
+	        		.attr('name', 'jobs[job-' + newFormId + '][industry_text_json][]');
+	        });
+        
         $('.currency-' + id).removeClass('currency-' + id).addClass('currency-' + i);
+        
+        addedForm.find('.currency-id-' + id)
+			.removeClass('currency-id-' + id)
+			.addClass('currency-id-' + newFormId)
+			.attr('name', 'jobs[job-' + newFormId + '][currency_id]');
+		
+		var currencyInputText = addedForm.find('.currency-input-text-' + id);
+		var currencyInputTextIndex = currencyInputText.attr('class').split(" ")[0].substr(-1);
+		currencyInputText
+			.removeClass('currency-input-text-' + id + ' input-text-currency-' + id + '-' + currencyInputTextIndex)
+			.addClass('currency-input-text-' + newFormId + ' input-text-currency-' + newFormId + '-' + currencyInputTextIndex)
+			.attr('name', 'jobs[job-' + newFormId + '][currency_text]');
+
+		var currencyInputTextJSON = addedForm.find('.currency-input-text-json-' + id);
+		currencyInputTextJSON
+			.removeClass('currency-input-text-json-' + id + ' input-text-json-currency-' + id + '-' + currencyInputTextIndex)
+			.addClass('currency-input-text-json-' + newFormId + ' input-text-json-currency-' + newFormId + '-' + currencyInputTextIndex)
+			.attr('name', 'jobs[job-' + newFormId + '][currency_text_json]');
 
         $('.date-range-' + id).removeClass('date-range-' + id).addClass('date-range-' + i);
         $('.date-range-input-' + id).removeClass('date-range-input-' + id).addClass('date-range-input-' + i);
+
+        console.log('edit reset id => ', id + ' = ' + i);
     });
 }
+
+/*function resetAddedFormId() 
+{
+	//reset selectPickers container
+    $.each($('.added-job-form'), function(i, elem) {
+    	var newFormId = i;
+        var addedForm = $(this);
+        var id = _.last(addedForm.attr("id").split("-"));
+        
+        addedForm
+        	.attr("id", "added-job-form-" + i)
+        	.removeClass("added-job-form-" + id)
+        	.addClass("added-job-form-" + i);
+
+        $('.location-' + id).removeClass('location-' + id).addClass('location-' + i);
+       
+		$('.industry-' + id).removeClass('industry-' + id).addClass('industry-' + i);
+
+        $('.currency-' + id).removeClass('currency-' + id).addClass('currency-' + i);
+
+        $('.date-range-' + id).removeClass('date-range-' + id).addClass('date-range-' + i);
+
+        $('.date-range-input-' + id).removeClass('date-range-input-' + id).addClass('date-range-input-' + i);
+ 
+        //console.log('edit reset id => ', id + ' = ' + i);
+    });
+}*/
 
 function captureFormInputVal() 
 {
@@ -385,12 +626,13 @@ function captureFormInputVal()
 
 function getAddedFormNum() 
 {
-    var addedFormNum = $('.added-job-form').length;
-    
-    if (addedFormNum > 1) 
-        return addedFormNum;
-    else 
-        return 1;
+    var lastAddedForm = $('.added-job-form').last();
+    var classStr = lastAddedForm.attr('class');
+    var lastAddedFormNum = parseInt(classStr.substring(classStr.indexOf('added-job-form-')+15)) + 1;
+
+    console.log(lastAddedFormNum);
+   
+   	return lastAddedFormNum; 
 }
 
 function removeSpecChar(str) {
@@ -399,7 +641,7 @@ function removeSpecChar(str) {
 
 var DateHelper = (function($) {
 	
-	var timeRangeId = 0;
+	var addedTimeId = 1;
 
 	return {
 		init: init,
@@ -408,55 +650,75 @@ var DateHelper = (function($) {
 		addTimeRange: addTimeRange,
 		removeTimeRange: removeTimeRange,
 		disabledDayTime: disabledDayTime,
+		getDateStr: getDateStr,
+		getMonth: getMonth
 	};
 
 	function init() {}
 
-	function removeTimeRange(elem)
-	{
-		$(elem).remove();
+	function getDay(day, short) 
+	{			
+		var dnames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
+ 				'Thursday', 'Friday', 'Saturday', 'Sunday'];
+ 		if (short) {
+ 			dnames = ['Sun', 'Mon', 'Tue', 'Wed',
+ 				'Thur', 'Fri', 'Sat', 'Sun'];
+ 		}
+ 		return dnames[day];
 	}
 
-	function getDay(day) {
-			var dnames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
-	 				'Thursday', 'Friday', 'Saturday', 'Sunday'];
-	 		return dnames[day];
+
+	function getMonth(month) {
+		var mnames = ['Jan', 'Feb', 'Mar', 'Apr',
+ 				'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+ 		return mnames[month];
 	}
 
-	function addTimeRange(timeRangeCon, formId, parentIndex, timeStamp)
+	function removeTimeRange(elem, timeInputCon)
 	{
-		var suffix = formId + '-' + parentIndex + '-' + timeStamp;
-		var timeFrom = $('.duration-time-from-' + suffix);
-		var timeTo = $('.duration-time-to-' + suffix);
+		if ($(timeInputCon).length >  1)
+			$(elem).remove();
+	}
 
-		if (!$.trim(timeFrom.val()).length || !$.trim(timeTo.val()).length) 
-		{
-			timeFrom.css('border-color', '#a94442');
-			timeTo.css('border-color', '#a94442');
+	function addTimeRange(formId, timeStamp, 
+		timeInputConClass, date, dateStr, day) {
+		
+		var lastFrom = $('.time-input-from-' + formId + '-' + timeStamp).last();
+		var lastTo = $('.time-input-to-' + formId + '-' + timeStamp).last();
+		
+		//console.log(lastFrom.val().length, lastTo.val().length);
+
+		lastFrom.css('border-color', '');
+		lastTo.css('border-color', '');
+		if (!lastFrom.val().length || !lastTo.val().length) {
+			lastFrom.css('border-color', 'red');
+			lastTo.css('border-color', 'red');
 			return false;
-		} else {
-			timeFrom.css('border-color', '');
-			timeTo.css('border-color', '');
 		}
 
-		var tempData = {
-			formId: formId,
-			parentIndex: parentIndex,
-			timeRangeId: timeRangeId,
-			timeStamp: timeStamp,
-		};
+		var timeInputConClass = $(timeInputConClass).last();
+		var addedDateRangeTemp = _.template($('#added-date-range-temp').html());
+		
+		addedDateRangeTemp = addedDateRangeTemp({
+				formId: formId,
+				timeStamp: timeStamp,
+				addedTimeId: addedTimeId,
+				date: date,
+				dateStr: dateStr,
+				day: day
+			});
 
-		var addedTimeRangeTemp = _.template($('#added-time-range-temp').html());
-		$(timeRangeCon).after(addedTimeRangeTemp(tempData));
+		timeInputConClass.after(addedDateRangeTemp);
 
 		Helper.time('.time-only');
 
 		captureFormInputVal();
 
-		timeRangeId++;
+		addedTimeId++;
 	}
 
-	function rangePicker(selector1, selector2, dayTimeCon, formId)
+	function rangePicker(selector1, selector2, dayTimeCon, 
+		formId) 
 	{
 		var datePicker = $(selector1).datepicker({
 	            format: 'yyyy-mm-dd',
@@ -464,11 +726,15 @@ var DateHelper = (function($) {
 	        }
 	    )
 		.on('changeDate', function(e) {
-
+			
 			var inputs = $(selector1).find(selector2);
+			
+			var fromElem = $(inputs.eq(0)); 
+			var toElem = $(inputs.eq(1));
+
 			var offset = 24 * 60 * 60 * 1000;
-			var from = Date.parse($(inputs.eq(0)).val() + ' 00:00:00');
-			var to = Date.parse($(inputs.eq(1)).val() + ' 23:59:00');
+			var from = Date.parse(fromElem.val() + ' 00:00:00');
+			var to = Date.parse(toElem.val() + ' 23:59:00');
 
 			var rangeDateArr = [];
 
@@ -482,20 +748,20 @@ var DateHelper = (function($) {
 				rangeDateArr.push({ label: day + ", " + date,
 						timeStamp: from,
 						dateStr: dateFrom.getFullYear() + "-" + (dateFrom.getMonth() + 1) + "-" + date,
-						day: day,
-						preview : day + " (:time_from to :time_to)"
+						day: day
 					});
 
 				from += offset;
 			}
 
+			fromElem.attr('value', fromElem.val());
+			toElem.attr('value', toElem.val());
+
 			var tempData = {
 				formId: formId,
+				addedTimeId: 0,
 				rangeDateArr: rangeDateArr,
 			};
-
-			//console.log(tempData);
-
 			Template.get('#date-range-input-temp', dayTimeCon, tempData);
 
 			disabledDayTime();
@@ -508,71 +774,40 @@ var DateHelper = (function($) {
 	    return datePicker;
 	}
 
-	function disabledDayTime()
+	function disabledDayTime(elem, formId, timestamp)
 	{
-		$('input[class^=duration-time-enable]').on('click', function() {
-				var checkbox = $(this);
-				var elemIndexs = checkbox.data('index').split('-');
-				var formId = elemIndexs[0], rangeDateArrIndex = elemIndexs[1], timeStamp = elemIndexs[2];
+		var checkbox = $(elem);
 
-				var fromInput = $('.duration-time-from-' + formId + '-' + rangeDateArrIndex + '-' + timeStamp);
-				var toInput = $('.duration-time-to-' + formId + '-' + rangeDateArrIndex + '-' + timeStamp);
-				
-				fromInput.removeAttr('disabled');
-				toInput.removeAttr('disabled');
-				
-				$('.duration-time-from-' + formId + '-' + rangeDateArrIndex).removeAttr('disabled');
-				$('.duration-time-to-' + formId + '-' + rangeDateArrIndex).removeAttr('disabled');
+//		console.log(formId, timestamp);
 
-				if (!checkbox.is(':checked'))
-				{
-					fromInput.attr('disabled', true);
-					toInput.attr('disabled', true);
-					
-					$('.duration-time-from-' + formId + '-' + rangeDateArrIndex).attr('disabled', true);
-					$('.duration-time-to-' + formId + '-' + rangeDateArrIndex).attr('disabled', true);
-				}
+		var inputs = $('.time-input-' + formId + '-' + timestamp).find(':input');
 
-			});
+		inputs.removeAttr('disabled');
+		
+		if (!checkbox.is(':checked'))
+		{
+			inputs.attr('disabled', true);
+		}
+	}
 
+	function getDateStr(date, type) {
+		
+		var newDate = new Date(date);
+
+		var day = getDay(newDate.getDay(), true);
+		var date = (newDate.getDate() < 10) ? '0' + newDate.getDate() : newDate.getDate();
+		var year = newDate.getFullYear();
+		var month = newDate.getMonth();
+
+		if (type == "day") return day;
+		if (type == "sm-d-y") return DateHelper.getMonth(month) + ", " + date + ", " + year;
+		return day + " "+ date + ", " + year;
 	}
 
 })($);
 $(DateHelper.init);
 
-function makeDurationDate(durations, resource_type) {
-	var dateDurations = "";
-	var resourceType = resource_type || "";
 
-	if (resourceType === "database") {
-		
-		durations = JSON.parse(durations);
-
-		$.each(durations, function(i, duration) {
-			var date = _.last(duration.date.split('-'));
-			var day = duration.day;
-
-			$.each(duration.time, function(i, time){
-				dateDurations += day + ' (' +  time.start + ' to ' + time.end + ') <br/>';
-			});
-		});
-
-		return dateDurations;	
-	}
-
-	$.each(durations, function(timestamp, elem) {
-
-		var duration_time_from = elem.duration_time_from;
-		var duration_time_to = elem.duration_time_to;
-
-		for(var i in duration_time_from) {
-			dateDurations += elem.day + ' (' + duration_time_from[i] + ' to ' + duration_time_to[i] + ') <br/>';
-		}
-
-	});
-
-	return dateDurations;
-}
 
 
 function arrayToString(arr, replace)
@@ -837,13 +1072,159 @@ function createSearchKeys(jobGroups, jobPostId)
 
 var Helper = (function($){
 
+	var templates = [];
+
 	return {
 		hide: hide,
 		removeSpecChar: removeSpecChar,
 		number: number,
 		time: time,
 		isFileUploaded: isFileUploaded,
+		setPostTypeStatus: setPostTypeStatus,
+		makeDurationDate: makeDurationDate,
+		doUploadProcess: doUploadProcess,
+		validateSaveAddMore: validateSaveAddMore,
+		formValidationMsg: formValidationMsg,
+		btnLoader: btnLoader
 	};
+
+	// Get Template
+    function getTemplate(templateName, callback, source) {
+
+        var defer = $.Deferred();
+
+        defer.notify("processing...");
+        if (!templates[templateName]) {
+            $.get(source + templateName, function(resp) {
+                compiled = _.template(resp);
+                templates[templateName] = compiled;
+                if (_.isFunction(callback)) {
+                    callback(compiled);
+                    defer.resolve("temp_rendered");
+                }
+            }, 'html')
+            .fail(function(jqXHR, textStatus ) {
+                defer.reject(textStatus);
+                console.log(textStatus + ": Failed to rendered the template.");
+            });
+        } else {
+            callback(templates[templateName]);
+            defer.resolve("temp_in_array");
+            defer.notify("done");
+        }
+
+        return defer;
+    }
+
+	function formValidationMsg(errorMsgs, baseTemplateUrl, isCrollUp) 
+	{
+		errorMsgs = errorMsgs || null;
+		isCrollUp = (!isCrollUp) ? isCrollUp : true;
+		//console.log(isCrollUp);
+		getTemplate('error-msg.html', function(template) {
+			$('.error-msg-con').empty();
+			if (errorMsgs) {
+	            var renderedTemp = template({ errorMsgs : errorMsgs });
+	            $('.error-msg-con').html(renderedTemp);
+	            if (isCrollUp)
+	            	$('body,html').stop(true).animate({ 'scrollTop': 0 });
+        	}
+        }, baseTemplateUrl);
+	}
+
+	function validateSaveAddMore(formData, callback)
+	{
+		$.ajax({
+                type: 'POST',
+                url: apiUrl + 'to-json-encode',
+                cache: false,
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                	if (response.errorMsg) {
+                		callback(false, response.errorMsg);
+                	} else {
+                		callback(true, null);
+                	}
+                },
+                error: function(response) {
+                    console.log("Failed: ", response);
+                }
+            });
+	}
+
+	function btnLoader(btn, origLbl, eventType)
+	{
+		btn = $.trim(btn).length ? btn : null;
+	
+		if (btn) {
+			
+			if(eventType === "start") {
+				$(btn)
+					.text("Processing...")
+					.prepend('<i class="fa fa-spin fa-circle-o-notch"></i> ')
+					.addClass('disabled');
+			};
+
+			if(eventType === "complete") {
+				$(btn)
+					.text(origLbl)
+					.removeClass('disabled');
+			}
+		}
+	}
+
+	function doUploadProcess(fileUploader, btn, origLbl) 
+    {
+    	var dfd = $.Deferred();
+        var filename = null;
+
+		var response = {
+			data: "processing"
+		}
+
+		dfd.notify(response);
+		
+        if (fileUploader) 
+        {
+            fileUploader
+            	.submit()
+                .success(function (result) { 
+                    
+                    var file = _.first(result.files);
+                    
+                    if (file) {
+                        response.data = file;
+                        dfd.resolve(response);
+                    }
+                })
+                .error(function (jqXHR, textStatus, errorThrown) {
+                	response.data = textStatus;
+                	dfd.reject(response);
+                });
+        }
+
+        return dfd;
+    }
+
+	function setPostTypeStatus(postTypeID)
+	{
+		if (postTypeID == 1) {
+			$('#btn-single-job').removeClass('active');
+			$('#posttype-single-post').prop('checked', false);
+
+			$('#btn-group-job').addClass('active');
+			$('#posttype-group-post').prop('checked', true);
+		}
+
+		if (postTypeID == 2) {
+			$('#btn-group-job').removeClass('active');
+			$('#posttype-group-post').prop('checked', false);
+
+			$('#btn-single-job').addClass('active');
+			$('#posttype-single-post').prop('checked', true);
+		}
+	}
 
 	function hide(elem) {
 		if (typeof elem !== 'object') {
@@ -891,11 +1272,11 @@ var Helper = (function($){
 	{
 		$(selector).on('blur', function() {
 			var $this = $(this);
-			var regex = /\b(\d{2})+:(\d{2})+\s?(AM|am|PM|pm)+\b/;
-
+			var regex = /^(0?[1-9]|1[012])(:[0-5]\d) [APap][mM]$/i;
+			
 			$this.css('border-color', '');
 
-			if ( !regex.test($this.val()) ) 
+			if ( !regex.test($this.val()) )
 			{
 				$this.css('border-color', 'red');
 				$this.val("");
@@ -905,6 +1286,29 @@ var Helper = (function($){
 			return true;
 		});
 	}
+
+	function makeDurationDate(durations) 
+	{
+		var dateDurations = "";
+		
+		//console.log(durations);
+		durations = (typeof durations === "object") ? durations : JSON.parse(durations);
+		//console.log(durations);
+
+		$.each(durations, function(timestamp, elem) {
+
+			var duration_time_from = elem.duration_time_from;
+			var duration_time_to = elem.duration_time_to;
+
+			for(var i in duration_time_from) {
+				dateDurations += elem.day + ' (' + duration_time_from[i] + ' to ' + duration_time_to[i] + ') <br/>';
+			}
+
+		});
+
+		return dateDurations;
+	}
+
 })($);
 
 function isHeadlinePhotoUploaded(backFunction)
@@ -916,9 +1320,29 @@ function isHeadlinePhotoUploaded(backFunction)
             message: "<h5>In order to have a Job Headline Photo you must to upload it first. Click back to upload or click continue.</h5>",
             okBtn: 'Back',
             backFunction: backFunction,
+            closeFunction: null,
             closeBtn: null,
         });
 
         $('.alert-msg').modal('show');
     }
+}
+
+function saveAddMoreAlertMsg()
+{
+    Template.get('#alert-msg-temp', '.alert-msg-temp-con', {
+        title: 'Alert!',
+        message: "<h5>Please fill up required fields before adding more job position.</h5>",
+        okBtn: "Check Required Fields",
+        backFunction: 'gotoTop()',
+        closeFunction: null,
+        closeBtn: "Close",
+    });
+
+    $('.alert-msg').modal('show');
+}
+
+function gotoTop()
+{
+	$('body,html').stop(true).animate({ 'scrollTop': 0 });	
 }

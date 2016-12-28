@@ -41,9 +41,9 @@
 <script src="js/plugins/datepicker/bootstrap-datepicker.js"></script>
 
 <?php include 'php-helpers.php'; ?>
+
 <script type="text/javascript">
-	var PUBLIC_DIR = "<?php echo serverDocRoot(); ?>";
-	var AJAX_LOADER = '<center><i class="fa fa-spin fa-5x fa-circle-o-notch" ></i></center>';
+	var BASE_URL = "<?php echo serverDocRoot(); ?>";
 </script>
 
 <!-- Footer Scripts

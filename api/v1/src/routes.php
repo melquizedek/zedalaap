@@ -94,13 +94,11 @@ $app->group('/job', function() {
 	});
 });
 
-/* Use to convert form serialize array to JSON object
+/* Use to convert form data to JSON object
 ======================================= */
 $app->map(['POST', 'GET'], '/to-json-encode', function($request, $response, $args) {
-
 	$result = $this->get('JobValidator')->setDataToValidate($request->getParsedBody());
 	echo json_encode($result);
-	
 });
 
 /* Routes Api for file uploading

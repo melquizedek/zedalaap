@@ -28,7 +28,8 @@ var FileUploader = (function($) {
 			console.log('empty');
 		}
 
-		function uploader (fileInput, canvasId) {
+		function uploader (fileInput, canvasId) 
+		{
 
 			var jqUploadProgbar = $('.jq-upload-progbar');
 		    var imgToUpload = $('.file-to-upload');
@@ -59,6 +60,17 @@ var FileUploader = (function($) {
 
 		        });
 
+				/*.on('fileuploadadd', function (e, data) {
+	    			
+	    			//FileUploader.reset();
+
+	    			//var file = data.files[0];
+
+			        imgToUpload.html('<span>' + file.name + '</span><br/>')
+				        .append(uploadButton.clone(true).data(data));
+
+			    })*/
+
 		    var fileUploader = $(fileInput).fileupload({
 			        url: apiUrl + 'file/upload',
 			        dataType: 'json',
@@ -71,16 +83,6 @@ var FileUploader = (function($) {
 			        disableImageResize: /Android(?!.*Chrome)|Opera/
 			            .test(window.navigator.userAgent)
 		    	})
-	    		.on('fileuploadadd', function (e, data) {
-	    			
-	    			FileUploader.reset();
-
-	    			var file = data.files[0];
-
-			        imgToUpload.html('<span>' + file.name + '</span><br/>')
-				        .append(uploadButton.clone(true).data(data));
-
-			    })
 		    	.on('fileuploadprocessalways', function (e, data) {
 		    		
 			        var index = data.index;
@@ -98,6 +100,8 @@ var FileUploader = (function($) {
 
 			        if (file.preview) {
 			        	
+			        	$('.file-to-upload').empty();
+
 			        	imgToUpload.prepend('<canvas id="' + canvasId + '"></canvas><br/>');
 
 			            FileUploader.drawImageToCanvas(file,
@@ -166,10 +170,10 @@ var FileUploader = (function($) {
 			    .prop('disabled', !$.support.fileInput)
 			    .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
-			    return FileUploader;
+			    return fileUploader;
 		}
 
-		function template (fileUploaderCon, viewData) {
+		function template(fileUploaderCon, viewData) {
 			
 			var renderedTemp =  _.template($('#file-uploader-temp').html());
     		$(fileUploaderCon).html(
@@ -213,7 +217,7 @@ var FileUploader = (function($) {
 
 				}, false);
 
-				Img.src = imgUrl || FileUploader.imgUrl || PUBLIC_DIR + 'api/v1/public/files/no-img.jpg';
+				Img.src = imgUrl || FileUploader.imgUrl || BASE_URL + 'api/v1/public/files/no-img.jpg';
 				//console.log(Img.src, canvas);
 
 	    	} catch(e) {

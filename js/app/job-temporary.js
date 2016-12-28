@@ -1,168 +1,150 @@
-var temporaryForm = $('form[name=add-new-job-form]');
-
 var JobTemporary = (function ($) {
 	
-	var formID = 1;
-	var formData = null;
-	var btnGroupPostType = null;
-	var btnSinglePostType = null;
-	var formCon = null;
-	var jobPanel = null;
-	var jobGroupPostCon = null;
-	var jobSinglePostCon = null;
-	var jobPreviewCon = null;
-	var postTypeSingleRadio = null;
-    var postTypeGroupRadio = null;
-	var isGroupPost = false;
-	var isSinglePost = false;
-	var btnJobGroup = null;
-    var btnJobSingle = null;
+	var templates = [];
+    var baseTemplateUrl = 'template/job/temporary/';
+    var postingUrl = 'job/posting';
+    var formID = 1;
+    var formData = null;
+    var fileUploader = null;
+    var isRendered = false;
+    var ajaxLoader = '<center><i class="fa fa-spin fa-5x fa-circle-o-notch"></i></center>';
 
 	return {
 		init: init,
 		removeSaveAddMore: removeSaveAddMore,
 		addSaveAddMore: addSaveAddMore,
 		previewBack: previewBack,
-		makeDurationDate: makeDurationDate,
-		posting: posting,
+		posting: posting
 	};
 
 	function init()
 	{
 		$.fn.datepicker.defaults.format = "yyyy-mm-dd";
-
-		commonTemp();
-
-		btnGroupPostType = $('#btn-group-job');
-		btnSinglePostType = $('#btn-single-job');
-
-		formCon = $('.add-new-job-con');
-		errorMsgCon = $('.error-msg-con');
-		jobPanel = $('.panel-part-time-con');
-		jobGroupPostCon = $('.job-group-post');
-		jobSinglePostCon = $('.job-single-post');
-		jobPreviewCon = $('.temporary-preview-con');
-		postTypeGroupRadio = $('#posttype-group-post');
-		postTypeSingleRadio = $('#posttype-single-post');
-
-		btnJobGroup = $('.btn-job-group-post');
-    	btnJobSingle = $('.btn-job-single-post');
-        
-		groupPostTemp();
-		jobPreview();
-		selectedPost();
-        Helper.number('.number-only');
+        addEventHandlers();
+		jobGroupTemp();
 		captureFormInputVal();
 	}
 
-	function commonTemp() 
+    function addEventHandlers()
+    {
+        $(".panel-heading").on("click", "#btn-group-job", jobGroupPosting);
+        $(".panel-heading").on("click", "#btn-single-job", jobSinglePosting);
+        $(".add-new-job-con").on('submit',"form[name=add-new-job-form]", preview);
+    }
+
+    function jobGroupPosting()
+    {
+        $('.btn-job-single-post').addClass('hidden');
+        $('.btn-job-group-post').removeClass('hidden');
+        $('.error-msg-con').empty();
+        $('.job-single-post').empty();
+        jobGroupTemp();
+    }
+
+    function jobSinglePosting()
+    {
+        $('.btn-job-group-post').addClass('hidden');
+        $('.btn-job-single-post').removeClass('hidden');
+        $('.error-msg-con').empty();
+        $('.job-group-post').empty();
+        singlePostTemp();
+    }
+
+	function preview(e)
 	{
-		Template.get('#btn-post-type-temp', '.panel-heading');
-		Template.get('#panel-control-button-temp', '.panel-footer', { callback : 'JobTemporary.addSaveAddMore()' });
-	}
+        e.preventDefault();
 
-	function selectedPost()
-	{
-		btnGroupPostType.on('click', function() {
-
-			$('.btn-job-single-post').hide();
-			$('.btn-job-group-post').show();
-
-			errorMsgCon.empty();
-			jobSinglePostCon.empty();
-			groupPostTemp();
-		});
-
-		btnSinglePostType.on('click', function() {
-			
-			$('.btn-job-group-post').hide();
-			$('.btn-job-single-post').show();
-
-			errorMsgCon.empty();
-			jobGroupPostCon.empty();
-			singlePostTemp();
-		});
-	}
-
-	function jobPreview()
-	{
-		temporaryForm.on('submit', function(e) {
-
-            e.preventDefault();
-
-            var dataArr = $(this).serializeArray();
+        var dataArr = $(this).serializeArray();
+        
+        var successCallback =  function(response) {
             
-            var fileInfo = {};
+            Helper.btnLoader('.btn-preview', 'Preview', 'complete');
 
-            try {
-                fileInfo = { name : 'FileInfo', 
-                    value: URL.createObjectURL(FileUploader.filesInfo) };
-            } catch(e) {
-                fileInfo = { name : 'FileInfo', value: null };
-            }
+            var responseData = JSON.parse(response);
 
-            dataArr.push(fileInfo);
+            if (responseData.errorMsg) {
 
-            var successCallback =  function(response) {
-                
-                //JobFulltimeActions.cleanUnNeededDom();
-
-                var responseData = JSON.parse(response);
-
-                if (responseData.errorMsg) {
-                    
-                    Template.get('#error-msg-temp', '.error-msg-con',
-                        { errorMsgs : responseData.errorMsg });
-
+                getTemplate('error-msg.html', function(template) {
+                    var renderedTemp = template({ errorMsgs : responseData.errorMsg });
+                    $('.error-msg-con').html(renderedTemp);
                     $('body,html').stop(true).animate({ 'scrollTop': 0 });
+                }, baseTemplateUrl);
 
-                } else {
+            } else {
 
-                    errorMsgCon.empty();
-                    
-                    formCon.hide();
-                    jobPreviewCon.show();
+                $('.error-msg-con').empty();
+                
+                $('.add-new-job-con').hide();
+                $('.temporary-preview-con').show();
 
-                    var previewTempData = {
-		                file_name : responseData.file_name,
-		                headline : (typeof responseData.headline !== "undefined") ? responseData.headline : null,
-		                headlineDesc : (typeof responseData.headline_desc !== "undefined") ? responseData.headline_desc : null,
-		                validUntil : responseData.hiring_duration_to,
-		                jobs : responseData.jobs,
-		            };
+                var previewTempData = {
+	                file_name : responseData.file_name || null,
+	                headline : responseData.headline || null,
+	                headlineDesc : responseData.headline_desc || null,
+	                validUntil : responseData.hiring_duration_to,
+	                jobs : responseData.jobs,
+	            };
 
-		            JobTemporary.formData = responseData;
-		            JobTemporary.formData.employment_type_text = 'Temporary';
+	            JobTemporary.formData = responseData;
+                JobTemporary.formData.employment_type_text = 'Temporary';
+                JobTemporary.formData.file_name = responseData.file_name || null;
+	            
+                //console.log(JobTemporary.fileUploader);
 
-                    isHeadlinePhotoUploaded('JobTemporary.previewBack()');
-                    
-		            Template.get('#temporary-time-preview', '.temporary-preview-con', previewTempData);
-                    //console.log(JobTemporary.formData);
-                }
+                $.when(Helper.doUploadProcess(JobTemporary.fileUploader))
+                        .done(function (response) {
+                            var filename = response.data.name;
+
+                            previewTempData.file_name = filename;
+
+                            JobTemporary.formData.file_name = filename;
+
+                            loadPreviewTemp(previewTempData);
+                        })
+                        .fail(function (response) {
+                            console.log(response, 'fail');
+                        })
+                        .progress(function (response) {
+                            loadPreviewTemp(previewTempData);
+                        });
+
+                //console.log(JobTemporary.formData);
             }
+        }
 
-            $.ajax({
-                type: 'POST',
-                url: apiUrl + '/to-json-encode',
-                data: dataArr,
-                success: successCallback,
-                error: function(response) {
-                    console.log("Failed: ", response);
-                }
-            });
+        Helper.btnLoader('.btn-preview', '', 'start');
 
+        $.ajax({
+            type: 'POST',
+            url: apiUrl + '/to-json-encode',
+            data: dataArr,
+            success: successCallback,
+            error: function(response) {
+                console.log("Failed: ", response);
+            }
         });
 	}
 
+    function loadPreviewTemp(previewTempData) {
+        getTemplate('preview.html', function(template) {
+            var renderedTemp = template(previewTempData)
+            $('.temporary-preview-con').html(renderedTemp);
+        }, baseTemplateUrl);
+    }
+
 	function posting(btn) {
         
-        var jobsArr = $.makeArray(JobTemporary.formData.jobs);
+        //console.log(JobTemporary.formData.jobs);
+
+        var jobsArr = _.first($.makeArray(JobTemporary.formData.jobs));
         
-        var jobsArrNew = $.map(jobsArr[0], 
+        var jobsArrNew = $.map(jobsArr, 
             function(val, key) { 
-                return arrayToString(val.industry_text) + " " + val.job_title + 
-                " " + arrayToString(val.location_text) + " " + val.currency_text +
-                " " + val.salary;
+                if (typeof val.industry_text !== "undefined" && typeof val.location_text !== "undefined") {
+                    return arrayToString(val.industry_text) + " " + val.job_title + 
+                    " " + arrayToString(val.location_text) + " " + val.currency_text +
+                    " " + val.salary;
+                }
             });
 
         localStorage.setItem('searchKeys', JSON.stringify(jobsArrNew));
@@ -217,21 +199,21 @@ var JobTemporary = (function ($) {
 
     function getDOMContent() 
     {
-        if (jobGroupPostCon.children().length) 
-            return jobGroupPostCon.html();
+        if ($('.job-group-post').children().length) 
+            return $('.job-group-post').html();
 
-        if (jobSinglePostCon.children().length) 
-            return jobSinglePostCon.html();
+        if ($('.job-single-post').children().length) 
+            return $('.job-single-post').html();
     }
 
 
 	function previewBack() 
 	{
-		jobPreviewCon.hide();
-		formCon.show();
+		$('.temporary-preview-con').hide();
+		$('.add-new-job-con').show();
 	}
 
-	function groupPostTemp()
+	function jobGroupTemp()
 	{
 		//edit part time job
 		if (typeof jobGroupID !== 'undefined') {
@@ -242,43 +224,50 @@ var JobTemporary = (function ($) {
             var jsonFileInputText = $('<input type="hidden"/>')
                     .attr({ name: 'json_file_id', value: jsonForEdit.jsonId });
             
-            temporaryForm.prepend(jsonFileInputText);
+            $('form[name=add-new-job-form]').prepend(jsonFileInputText);
 
             selectPicker.isEdit = true;
+            
+            Helper.setPostTypeStatus(postTypeID);
             
             $.ajax(jsonForEdit.file, {
                 dataType: 'JSON',
                 beforeSend: function() {
-
                     var postCon = null;
-                    if (postTypeID == 1) postCon = jobGroupPostCon;
-                    if (postTypeID == 2) postCon = jobSinglePostCon;
-                    postCon.html('<center><i class="fa fa-spin fa-5x fa-circle-o-notch"></i></center>');
+                    if (postTypeID == 1) postCon = $('.job-group-post');
+                    if (postTypeID == 2) postCon = $('.job-single-post');
+                    postCon.html(ajaxLoader);
                 },
                 success: function(response) {
                     
-                    //console.log(response);
-
                     if (postTypeID == 1) 
                     {
-                        jobGroupPostCon.html(response.html);
+                        $('.job-group-post').html(response.html);
                         
                         $('.group-job-fileupload-con').empty();
-                        groupPostFileUploader();
+                        
+                        groupPostFileUploader().on('fileuploadadd',
+                            function(e, data) {
+                                JobTemporary.fileUploader = data;
+                            });
                     }
 
                     if (postTypeID == 2) 
                     {
-                        jobSinglePostCon.html(response.html);
+                        $('.job-single-post').html(response.html);
 
-                        postTypeSingleRadio.attr('checked', true);
-                        postTypeGroupRadio.removeAttr('checked');
+                        $('#posttype-single-post').attr('checked', true);
+                        $('#posttype-group-post').removeAttr('checked');
 
-                        btnJobGroup.hide();
-                        btnJobSingle.show();
+                        $('.btn-job-group-post').hide();
+                        $('.btn-job-single-post').show();
 
                         $('.single-job-fileupload-con').empty();
-                        singlePostFileUploader();
+
+                        singlePostFileUploader().on('fileuploadadd',
+                            function(e, data) {
+                                JobTemporary.fileUploader = data;
+                            });
 
                     }
 
@@ -291,21 +280,22 @@ var JobTemporary = (function ($) {
                         }, 1000);
                     }
 
-                    temporaryForm.append($('<input type="hidden" name="job_group_id"/>').val(jobGroupID));
+                    $('form[name=add-new-job-form]').append($('<input type="hidden" name="job_group_id"/>').val(jobGroupID));
 
                     resetAddedFormId();
                     
                     formID = getAddedFormNum();
+                    console.log('edit form id ', formID);
 
                     $('.bootstrap-select').remove();
                     $.each(response.selectOptsLocation, 
                         function(i, opts) {
-                            selectPicker.locations('.location-' + i, "", 'jobs[job-' + i + '][location_id][]', i, 'location_text', $.trim(opts));
+                            selectPicker.locations('.location-' + i, "", 'jobs[job-' + i + '][location][]', i, 'location_text', $.trim(opts));
                         });
 
                     $.each(response.selectOptsIndustry, 
                         function(i, opts) {
-                            selectPicker.industries('.industry-' + i, "", 'jobs[job-' + i + '][industry_id][]', i, 'industry_text', $.trim(opts));
+                            selectPicker.industries('.industry-' + i, "", 'jobs[job-' + i + '][industry][]', i, 'industry_text', $.trim(opts));
                         });
 
                     $.each(response.selectOptsCurrencies, 
@@ -332,28 +322,36 @@ var JobTemporary = (function ($) {
 
 		} else {
 
-			Template.get('#group-add-job-form-temp', '.job-group-post', { formID : 0 });
+            getTemplate('group-post.html', function(template) {
 
-			groupPostFileUploader();
+                $('.job-group-post').html(template({ formID : 0 }));
 
-			selectPickers();
+                groupPostFileUploader()
+                    .on('fileuploadadd',
+                        function(e, data) {
+                            JobTemporary.fileUploader = data;
+                        });
 
-			$('.datepicker').datepicker();
+                selectPickers();
 
-			jobDateDuration();
+                $('.datepicker').datepicker();
 
-            Helper.number('.number-only');
+                //jobDateDuration(0);
 
-			captureFormInputVal();
+                Helper.number('.number-only');
+
+                captureFormInputVal();
+
+            }, baseTemplateUrl);
+
 		}
 
 	}
 
-	function jobDateDuration(formId)
+	/*function jobDateDuration(id)
 	{
-		formId = formId || 0;
-		Template.get('#date-duration-temp', '.job-duration-' + formId , { formID : formId });
-	}
+		Template.get('#date-duration-temp', '.job-duration-' + id , { formID : id });
+	}*/
 
 	function selectPickers()
 	{
@@ -365,57 +363,90 @@ var JobTemporary = (function ($) {
 	function groupPostFileUploader()
 	{
 		FileUploader.template('.group-job-fileupload-con',
-            { fileId : 'group-job-file-id' })
-            .uploader('#group-job-file-id', 'group-job-canvas');
+            { fileId : 'group-job-file-id' });
+        
+        return FileUploader.uploader('#group-job-file-id', 'group-job-canvas');
 	}
 
 	function singlePostTemp()
 	{
-		Template.get('#single-add-new-job-temp', '.job-single-post', { formID : 0 });
+        getTemplate('single-post.html', function(template) {
 
-		singlePostFileUploader();
-        
-        $('.datepicker').datepicker();
+            var renderedTemp = template({ formID : 0 });
+            $('.job-single-post').html(renderedTemp);
 
-		selectPickers();
+            singlePostFileUploader()
+                .on('fileuploadadd',
+                    function(e, data) {
+                        JobTemporary.fileUploader = data;
+                    });
+            
+            $('.datepicker').datepicker();
 
-		jobDateDuration();
+            selectPickers();
 
-        Helper.number('.number-only');
+            //jobDateDuration(0);
 
-		captureFormInputVal();
+            Helper.number('.number-only');
+
+            captureFormInputVal();
+            
+        }, baseTemplateUrl);
 	}
 
 	function singlePostFileUploader()
 	{
 		FileUploader.template('.single-job-fileupload-con',
-            { fileId : 'single-job-file-id' })
-            .uploader('#single-job-file-id', 'single-job-canvas');
+            { fileId : 'single-job-file-id' });
+
+        return FileUploader.uploader('#single-job-file-id', 'single-job-canvas');
 	}
 
-	function addSaveAddMore() 
-	{
-		Template.get('#job-group-multiple-form-temp', '.job-group-multiple-form-con', { formID : formID }, 'append');
-		
-		selectPicker.locations('.location-' + formID, "jobs[job-" + formID + "][location_id]", "", formID, 'location_text');
-		selectPicker.industries('.industry-' + formID, "jobs[job-" + formID + "][industry_id]", "", formID, 'industry_text');
-		selectPicker.currencies('.currency-' + formID, "jobs[job-" + formID + "][currency_id]", "", formID, 'currency_text');
+    function addSaveAddMore() 
+    {
+        Helper.btnLoader('.btn-save-more-addmore', '', 'start');
 
-		DateHelper.rangePicker('.date-range-' + formID, '.date-range-input-' + formID, '.day-time-con-' + formID, formID);
-		
-		jobDateDuration(formID);
+        Helper.validateSaveAddMore($('form[name=add-new-job-form]').serializeArray(), 
+            function(isValidInput, errorMsg) {
+            
+                Helper.btnLoader('.btn-save-more-addmore', 'Save & Add more', 'complete');
 
-        Helper.number('.number-only');
+                if (!isValidInput) {
+                    Helper.formValidationMsg(errorMsg, 
+                        baseTemplateUrl, false);
+                    saveAddMoreAlertMsg();
+                    return false;
+                }
 
-		captureFormInputVal();
+                if (isValidInput)
+                {
+                    getTemplate('add-new-job.html', function(template) {
 
-		formID++;
-	}
+                        var renderedTemp = template({ formID : formID });
+                        $('.job-group-multiple-form-con').append(renderedTemp);
 
-	function removeSaveAddMore(formID) 
-	{
-		$('#added-job-form-' + formID).remove();
-	}
+                        selectPicker.locations('.location-' + formID, "jobs[job-" + formID + "][location]", "", formID, 'location_text');
+                        selectPicker.industries('.industry-' + formID, "jobs[job-" + formID + "][industry]", "", formID, 'industry_text');
+                        selectPicker.currencies('.currency-' + formID, "jobs[job-" + formID + "][currency_id]", "", formID, 'currency_text');
+
+                        //jobDateDuration(formID);
+
+                        Helper.number('.number-only');
+
+                        captureFormInputVal();
+
+                        formID++;
+
+                    }, baseTemplateUrl);
+                }
+        });
+    }
+
+    function removeSaveAddMore(elem) 
+    {
+        if ($('.added-job-form').length > 1)
+            $(elem).parent().parent().remove();
+    }
 
 	function fileUploaderTemp(container, fileId, canvasId)
 	{
@@ -423,6 +454,23 @@ var JobTemporary = (function ($) {
             { fileId : fileId })
             .uploader('#' + fileId, canvasId);
 	}
+
+    /*
+        Getting template for Underscore
+    */
+    function getTemplate(templateName, callback, source) {
+        if (!templates[templateName]) {
+            $.get(source + templateName, function(resp) {
+                compiled = _.template(resp);
+                templates[templateName] = compiled;
+                if (_.isFunction(callback)) {
+                    callback(compiled);
+                }
+            }, 'html');
+        } else {
+            callback(templates[templateName]);
+        }
+    }
 
 })($);
 $(JobTemporary.init);
