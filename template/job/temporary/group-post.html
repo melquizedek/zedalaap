@@ -1,0 +1,136 @@
+
+<div class="form-group">
+    <label for="headline" class="col-md-4 control-label">
+        Job Headline</label>
+    <div class="col-md-6">
+        <input type="text" class="form-control" name="headline" id="headline">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="headline_desc" class="col-md-4 control-label">
+        Job Headline Description</label>
+    <div class="col-md-6">
+        <textarea class="form-control" name="headline_desc" 
+            id="headline_desc" cols="30" rows="4"></textarea>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="" class="col-md-4 control-label">
+        Job Headline Photo</label>
+    <div class="col-md-8 group-job-fileupload-con">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="hiring_duration_from" class="col-md-4 col-sm-4 col-xs-4 control-label">
+        Hiring Duration</label>
+    <div class="col-md-3 col-sm-3 col-xs-3">
+        <input type="text" class="form-control datepicker" name="hiring_duration_from" 
+                id="hiring_duration_from" placeholder="From">
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3">
+        <input type="text" class="form-control datepicker" name="hiring_duration_to" 
+                id="hiring_duration_to" placeholder="To">
+    </div>
+</div>
+
+<br/>
+
+<div class="job-group-multiple-form-con">
+	<div class="added-job-form added-job-form-<%= formID %>" id="added-job-form-<%= formID %>">
+    	<hr/>
+    	<div class="form-group">
+			<a href="javascript:void(0);" class="col-md-1 col-md-offset-11" 
+			    onclick="JobTemporary.removeSaveAddMore(this)">
+				<i class="fa fa-times fa-5" aria-hidden="true"></i>
+			</a>
+    	</div>
+    	<div class="form-group">
+            <label for="location" class="col-md-4 control-label">
+            	Location</label>
+            <div class="col-md-6 location-<%= formID %>">
+    		</div>
+    	</div>
+    	<div class="form-group">
+            <label for="job_title" class="col-md-4 control-label">
+            	Job Title</label>
+            <div class="col-md-6">
+                <input type="text" class="form-control job-title-<%= formID %>" 
+                    name="jobs[job-<%= formID %>][job_title]" id="job_title">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="job_desc" class="col-md-4 control-label">
+            	Job Description</label>
+            <div class="col-md-6">
+                <textarea class="form-control job-desc-<%= formID %>" 
+                    name="jobs[job-<%= formID %>][job_desc]" 
+            		id="job_desc" cols="30" rows="4"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="industry" class="col-md-4 control-label">
+            	Industry</label>
+            <div class="col-md-6 industry-<%= formID %>">
+            </div>
+    	</div>
+
+        <div class="form-group">
+            <label for="salary" class="col-md-4 control-label">
+                Salary</label>
+            <div class="col-md-2">
+                <input type="text" 
+                    class="form-control salary-<%= formID %> number-only" 
+                    name="jobs[job-<%= formID %>][salary]">
+            </div>
+            <div class="col-md-2 currency-<%= formID %>">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="industry" class="col-md-4 control-label">
+                Years Experiece</label>
+            <div class="col-md-3">
+                <input type="text" 
+                    class="form-control yr-exp-<%= formID %> number-only" 
+                    name="jobs[job-<%= formID %>][yr_exp]">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="industry" class="col-md-4 control-label">
+                Duration</label>
+            <div class="col-md-2">
+                <input type="text" 
+                    class="form-control duration-from-<%= formID %>" 
+                    data-provide="datepicker"
+                    name="jobs[job-<%= formID %>][duration_from]" placeholder="From">
+            </div>
+            <div class="col-md-2">
+                <input type="text" 
+                    class="form-control duration-to-<%= formID %>" 
+                    data-provide="datepicker"
+                    name="jobs[job-<%= formID %>][duration_to]" placeholder="To">
+            </div>
+        </div>
+
+        <div class="form-group">
+        	<div class="btn-group col-md-4 col-md-offset-4" data-toggle="buttons">
+    		  <label class="btn btn-primary btn-post-status-publish">
+    		    <input type="radio" 
+                    class="publish-<%= formID %>"
+                    name="jobs[job-<%= formID %>][post_status_id]"
+    		    	autocomplete="off" value="1"> Publish
+    		  </label>
+    		  <label class="btn btn-primary btn-post-status-draft active">
+    		    <input type="radio" 
+                    class="draft-<%= formID %>"
+                    name="jobs[job-<%= formID %>][post_status_id]"
+    		    	autocomplete="off" value="2" checked> Draft
+    		  </label>
+    		</div>
+        </div>
+    </div>
+</div>

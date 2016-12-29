@@ -1,0 +1,10 @@
+<%_.each(users, function(user){ %>
+<div class="col_three_fifth nobottommargin">
+	<p>Name : <%= user.name %></p>
+	<p>Email : <%= user.email %></p>
+	<p>Contact : <%= user.phone_number %></p>
+	<a href="#" data-scrollto="#job-apply" class="button button-3d button-black nomargin">Edit</a>
+	<div class="divider divider-short"><i class="icon-star3"></i></div>
+
+</div>
+<% }); %>

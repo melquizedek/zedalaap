@@ -1,0 +1,114 @@
+<script type="text/template" id="search-form-temp">
+<div class="row">
+	
+	<form name="<%= formName %>" class="form-horizontal">
+	
+		<input type="hidden" name="employment_type_id" value="<%= employmentTypeId %>"/>
+		<input type="hidden" name="post-status-id" value="<%= postStatusId %>"/>
+
+			<div class="form-group col-md-12">
+				<div class="col-md-5">
+					<input type="text" class="form-control" 
+						name="keywords" id="" placeholder="Keywords">
+				</div>
+			</div>
+	
+			<div class="form-group col-md-12">
+				<label for="hiring_duration_from" class="col-md-2 control-label">
+					Date Of Validity</label>
+				<div class="col-md-2">
+					<input type="text" class="form-control datepicker" name="validity-from" 
+							id="validity-from" placeholder="From" value="<%= validityStart %>">
+				</div>
+				<div class="col-md-2">
+					<input type="text" class="form-control datepicker" name="validity-to" 
+							id="validity-to" placeholder="To" value="<%= validityEnd %>">
+				</div>
+			</div>
+	
+			<div class="col-md-12">
+				<button type="submit" class="btn btn-primary" id="<%= btnId %>">
+					Search
+				</button>
+			</div>
+	
+		</form>
+</div>
+</script>
+
+<!-- Fulltime Preview Template
+=========================================-->
+<script type="text/template" id="preview-temp">
+	<center><h2>Preview</h2></center>
+	<div class="col-md-12">
+		<!---- Job Fulltime add new job form
+		======================================-->
+	    	<div class="col-md-12">
+	        	<h3><%= job_group_name %></h3>
+	        </div>
+	        <div class="col-md-4 col-sm-4 col-xs-4">
+	        	<% if (cover_photo) { %>
+	        		<img src="api/v1/public/files/<%= cover_photo %>" alt="">
+	        	<% } else { %>
+	        		<img src="api/v1/public/files/no-img.jpg" alt="">
+	        	<% } %>
+	        </div>
+	        <div class="col-md-8 col-sm-8 col-xs-8">
+	        	<p class="text-justify">
+            		<%= description %>
+            	</p>
+	        </div>
+	        <% _.each(jobs, function(job) { 
+	        	var location = (job.country_location) ? job.country_location : job.location_text;
+	        %>
+		        <div class="col-md-12">
+		        	<hr/>
+		        	<p>
+		        		<h3><%= job.job_title %></h3>
+	            		<b>Location: <%= location.toString().replace(/,/g, ", ") %></b>
+	            		<br/><br/>
+	            		<b>Posted: </b><%= job.posted_date %>
+	            		<br/>
+	            		<b>Salary: </b><%= job.salary + " " + job.currency_code %>
+	            		<br/>
+	            		<b>Experience: </b><%= job.yr_exp %> years
+	            		<br/>
+	            		<b>Valid Until: </b><%= duration_end %>
+	            		<br/>
+	            		<b>Industry: </b><%= (job.job_industries) ? job.job_industries.toString().replace(/,/g, ", ") : "" %>
+	            		<br/>
+
+	            		<% if (employment_type_id == 2 || employment_type_id == 3) { %>
+	            			<br/>
+	            			<b>Duration: </b><%=  job.job_duration_start + ' - ' + job.job_duration_end %>
+	            			<br/>
+	            		<% } %>
+
+	            		<% if (employment_type_id == 2) { %>
+	            			<br/>
+	            			<b><%= Helper.makeDurationDate(job.day_time) %></b>
+	            			<br/>
+	            		<% } %>
+
+	            		<br/>
+	            		<h3>Job Description</h3>
+	            		<p class="text-justify">
+	            			<%= job.job_description %>
+	            		</p>
+		        	</p>
+		        </div>
+	        <% } ); %>
+	        <div class="col-md-12">
+	        	<hr/>
+	        </div>
+	  		<div class="col-md-12 col-md-offset-10">
+	            <div class="form-group">
+	                <a href="javascript:void(0);" class="btn btn-primary" 
+	                	onclick="JobList.fulltimePreviewBack();">Back</a>
+	                <!--<a href="javascript:void(0);" class="btn btn-primary" onclick="JobFulltimeGroupPost.posting(this);">
+	                    Post
+	                </a>-->
+	            </div>
+	        </div>
+	</div>
+</script>

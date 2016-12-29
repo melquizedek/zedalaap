@@ -1,0 +1,41 @@
+<script type="text/template" id="short-listed-temp">
+<% _.each(applicantInfo, function(applicant){ %>
+<div class="col-md-12" style="padding-bottom: 5em">
+    
+    <div class="col-md-5">
+        
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <a href="<%= applicant.user_id %>"><%= applicant.first_name %>, <%= applicant.last_name %></a>
+                </h3>
+            </div>
+
+            <div class="panel-body">
+                <p style="overflow: auto;">
+                    <strong>Position</strong> : <%= applicant.position || "position not specified" %>
+                    <br/>
+                    <br/>
+                    <strong>Skills</strong> : <%= applicant.skills || "skills not specified" %>
+                    <br/>
+                    <br/>
+                    <strong>Current Location</strong> : <%= applicant.location %>
+                    <br/>
+                    <strong>Nationality</strong> : <%= applicant.nationality %>
+                </p>
+            </div>
+
+            <div class="panel-footer">
+                <button type="button" class="btn btn-primary btn-sm" data-user-id="<%= applicant.user_id %>">
+                    View CV
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<% }); %>
+</script>

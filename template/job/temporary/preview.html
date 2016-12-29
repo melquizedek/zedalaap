@@ -1,0 +1,68 @@
+<center><h2>Preview</h2></center>
+<div class="col-md-12">
+    <!---- Job Fulltime add new job form
+    ======================================-->
+    <form name="form_preview_fulltime" class="form-horizontal" role="form" novalidate>
+        <div class="col-md-12">
+            <h4><%= headline %></h4>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            <% if (file_name) { %>
+                <img src="<%= apiUrl %>files/<%= file_name %>">
+            <% } else { %>
+                <img src="<%= apiUrl %>files/no-img.jpg">
+                <!--<canvas id="preview-canvas"></canvas>-->
+            <% } %>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-8">
+            <p class="text-justify">
+                <%= headlineDesc %>
+            </p>
+        </div>
+        <% _.each(jobs, function(job) { 
+            if (typeof job.location_text !== "undefined" && typeof job.industry_text !== "undefined") 
+            { 
+        %>
+            <div class="col-md-12">
+                <hr/>
+                <p>
+                    <h3><%= job.job_title %></h3>
+                    <b>Location: <%= job.location_text.toString().replace(/,/g, ", ") %></b>
+                    <br/><br/>
+                    <b>Posted: </b>
+                    <br/>
+                    <b>Salary: </b><%= job.salary + " " + job.currency_text %>
+                    <br/>
+                    <b>Experience: </b><%= job.yr_exp %> years
+                    <br/>
+                    <b>Valid Until: </b><%= DateHelper.getDateStr(validUntil) %>
+                    <br/>
+                    <b>Industry: </b><%= job.industry_text.toString().replace(/,/g, ", ") %>
+                    <br/><br/>
+                    <b>Duration: </b>
+                        <%= DateHelper.getDateStr(job.duration_from) + ' - ' + DateHelper.getDateStr(job.duration_to) %>
+                    <br/><br/>
+                    <h3>Job Description</h3>
+                    <p class="text-justify">
+                        <%= job.job_desc %>
+                    </p>
+                </p>
+            </div>
+            
+            <% } %>
+
+        <% } ); %>
+        <div class="col-md-12">
+            <hr/>
+        </div>
+        <div class="col-md-12 col-md-offset-10">
+            <div class="form-group">
+                <a href="javascript:void(0);" class="btn btn-primary" 
+                    onclick="JobTemporary.previewBack();">Back</a>
+                <a href="javascript:void(0);" class="btn btn-primary" onclick="JobTemporary.posting(this);">
+                    Post
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
