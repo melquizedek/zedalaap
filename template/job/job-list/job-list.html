@@ -39,29 +39,32 @@
 				
 				<div class="col-md-12">
 					<div class="form-group">
-						<div>
+						<div class="btns-job-list">
 							
 							<% if (jobPostStatus == 1) { %>
-								<a href="javascript:void(0);" class="btn btn-primary btn-closed-<%= job.job_group_id %>" 
-									onclick="JobList.closeJob('.btn-closed-<%= job.job_group_id %>', '<%= job.job_group_id %>');">
+								<a href="javascript:void(0);" 
+									class="btn btn-primary btn-closed-job btn-closed-<%= job.job_group_id %>" 
+									data-options="<%= job.job_group_id %>">
 									Close Job
 								</a>
 							<% } %>
 
 							<% if (jobPostStatus == 2) { %>
-								<a href="javascript:void(0);" class="btn btn-primary btn-publish-<%= job.job_group_id %>" 
-									onclick="JobList.publish('.btn-publish-<%= job.job_group_id %>', '<%= job.job_group_id %>');">
+								<a href="javascript:void(0);" 
+									class="btn btn-primary btn-publish-job btn-publish-<%= job.job_group_id %>" 
+									data-options="<%= job.job_group_id %>">
 									Publish Job
 								</a>
 							<% } %>
 
-							<a href="javascript:void(0);" class="btn btn-primary" 
-								onclick="JobList.preview('<%= job.job_group_id %>', '<%= jobPostStatus %>');">
+							<a href="javascript:void(0);" 
+								class="btn btn-primary btn-preview-job" 
+								data-options='{ "jobGroupId": "<%= job.job_group_id %>", "jobPostStatus": "<%= jobPostStatus %>" }'>
 								Preview
 							</a>
 
-							<a href="javascript:void(0);" class="btn btn-primary" 
-								onclick="JobList.editPost('<%= job.job_group_id %>', '<%= jobPostStatus %>')">
+							<a href="javascript:void(0);" class="btn btn-primary btn-edit-job"
+								data-options='{ "jobGroupId": "<%= job.job_group_id %>", "jobPostStatus": "<%= jobPostStatus %>" }'>
 								Edit Posting
 							</a>
 							

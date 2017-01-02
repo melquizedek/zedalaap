@@ -49,7 +49,7 @@ $container['ResourcesController'] = function($c) {
 
 $container['JobController'] = function($c) {
     return new \App\Controllers\JobController($c->get('Job'), $c->get('Resources'), 
-        $c->get('db'), $c->get('JobHelper'));
+        $c->get('db'), $c->get('JobHelper'), $c->get('JobValidator'));
 };
 
 $container['UploadController'] = function($c) {

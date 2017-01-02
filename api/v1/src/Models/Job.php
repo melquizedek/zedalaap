@@ -42,9 +42,7 @@ class Job extends Main
 		$statement = $this->PDO->prepare($sql);
 		
 		if (!$statement->execute()) {
-
-			throw new Exception("insertToJobGroup: 
-				Data insert failed on i_job_group table", 1);
+			return false;
 		}
 
 		return $job_group_id;
@@ -71,9 +69,7 @@ class Job extends Main
 		$statement = $this->PDO->prepare($sql);
 		
 		if (!$statement->execute()) {
-
-			throw new PDOException("insertToJobPost: 
-				Data insert failed on i_job_post table", 1);
+			return false;
 		}
 
 		return $job_post_id;
@@ -113,9 +109,7 @@ class Job extends Main
 		$statement = $this->PDO->prepare($sql);
 		
 		if (!$statement->execute()) {
-
-			throw new PDOException("insertToJobObject: 
-				Data insert failed on i_job_object table", 1);
+			return false;
 		}
 
 		return true;
@@ -156,7 +150,7 @@ class Job extends Main
 
 		} catch (PDOException $e) {
 
-			throw new PDOException("getApplicantApplied: " . $e->getMessage(), 1);
+			return false;
 		}
 
 	}
@@ -250,8 +244,7 @@ class Job extends Main
 	            return $statement->fetchAll();
 
 		} catch (PDOException $e) {
-
-			throw new PDOException("getShortListed: " . $e->getMessage(), 1);
+			return false;
 		}
 
 	}
@@ -369,7 +362,7 @@ class Job extends Main
 
         } catch (PDOException $e) {
 
-			throw new PDOException("getJobList: " . $e->getMessage(), 1);
+        	return false;
 		}
 	}
 
@@ -387,8 +380,7 @@ class Job extends Main
 	        	return true;
 
 		} catch(PDOException $e) {
-
-			throw new PDOException("Error found at Job:updateTable - " . $e->getMessage());
+			return false;
 		}
 	}
 

@@ -7,24 +7,20 @@ var JobList = (function($) {
 
 	return {
 		init: init,
-		preview: preview,
-		closeJob: closeJob,
+		doPublish: doPublish,
 		doClose: doClose,
-		editPost: editPost,
-		fulltimePreviewBack: fulltimePreviewBack,
-		publish: publish,
-		doPublish: doPublish
 	};
 
 	function init() 
 	{
-		addEventHandlers();
 		template();
+		addEventHandlers();
 	}
 	
 	function addEventHandlers()
 	{
 		$('.nav-tabs').on('shown.bs.tab', 'a[data-toggle="tab"]', shownTab);
+		$('.preview-con').on('click', '.btn-preview-back', fulltimePreviewBack);
 	}
 
 	function shownTab(e)
@@ -36,61 +32,63 @@ var JobList = (function($) {
 	  	}
 
 	  	if (currentTab.attr('href') == '#panel-draft') {
-	  		draftJobListReq($('form[name=draft-search-form]'), '.draft-job-list-con');
+	  		
+	  		getSearchForm('.draft-search-form-con', {
+				formName: 'draft-search-form',
+				postStatusId: 2,
+				btnId: 'btn-draft-list-search'
+			});
 	  	}
 
 	  	if (currentTab.attr('href') == '#panel-rejected') {
-	  		rejectJobListReq($('form[name=reject-search-form]'), '.reject-job-list-con');
+
+	  		getSearchForm('.reject-search-form-con', {
+				formName: 'reject-search-form',
+				postStatusId: 3,
+				btnId: 'btn-reject-list-search'
+			});
 	  	}
 	}
 
-	function template()
+	function getSearchForm(searchFormCon, tempOptions)
 	{
 		var templateData = {
 			employmentTypeId: employmentTypeId,
 			validityStart: validityStart,
-			validityEnd: validityEnd,
+			validityEnd: validityEnd
 		};
 
+		$.extend(templateData || {}, tempOptions);
+		
 		getTemplate('search-form.html', function(template) {
 			
-			templateData.formName = 'publish-search-form';
-			templateData.postStatusId = 1;
-			templateData.btnId = 'btn-publish-list-search';
+			$(searchFormCon).html(template(templateData));
 
-			$('.publish-search-form-con').html(template(templateData));
+			if (templateData.postStatusId == 1) {
+				publishJobList();
+			}
 
-			publishJobList();
+			if (templateData.postStatusId == 2) {
+				draftJobList();
+			}
+
+			if (templateData.postStatusId == 3) {
+				rejectJobList();
+			}
+
 			dependencies();
 
 		}, baseTemplateUrl);
+	}
 
-		getTemplate('search-form.html', function(template) {
+	function template()
+	{
+		getSearchForm('.publish-search-form-con', {
+			formName: 'publish-search-form',
+			postStatusId: 1,
+			btnId: 'btn-publish-list-search'
+		});
 
-			templateData.formName = 'draft-search-form';
-			templateData.postStatusId = 2;
-			templateData.btnId = 'btn-draft-list-search';
-
-			$('.draft-search-form-con').html(template(templateData));
-
-			draftJobList();
-			dependencies();
-
-		}, baseTemplateUrl);
-
-		getTemplate('search-form.html', function(template) {
-
-			templateData.formName = 'reject-search-form';
-			templateData.postStatusId = 3;
-			templateData.btnId = 'btn-reject-list-search';
-
-			$('.reject-search-form-con').html(template(templateData));
-
-			rejectJobList();
-			dependencies();
-
-		}, baseTemplateUrl);
-		
 		if (employmentTypeId == 1) {
 			$('.employment-label').text("Full Time");
 			$('.btn-add-new-job').attr('href', 'fulltime-add-new-job.php');
@@ -114,6 +112,60 @@ var JobList = (function($) {
 		});
 	}
 
+	function doClose(btnElem, jobGroupId) 
+	{
+		Http.ajaxButton({
+			url : apiUrl + 'job/close/' + jobGroupId,
+			type : 'GET',
+			dataType : 'json',
+			success : function(response) {
+				
+				if (response.success) {
+
+					$('#job-group-' + jobGroupId).hide('slow');
+
+					publishJobReq($('form[name=publish-search-form]'), 
+						'.publish-job-list-con');
+					
+				}
+			}		
+		}, $(btnElem), 'Closing job...');
+	}
+
+	function closeJob()
+	{
+		var $this = $(this);
+		var jobGroupId = $this.data('options');
+		var btnClose = '.btn-closed-' + jobGroupId;
+
+		if ($this) {
+			
+			getTemplate('modal-temp.html', function(template) {
+
+				var renderedtemp = template({
+					title: 'Alert!',
+					message: '<h3>Are you sure you want to close this job?</h3>',
+					backFunction: "JobList.doClose('" + btnClose + "', '" + jobGroupId + "')",
+					okBtn: 'Close this job',
+					closeFunction: null,
+					closeBtn: 'Cancel'
+				});
+
+				$('.alert-msg-temp-con').html(renderedtemp);
+				$('.alert-msg').modal('show');
+
+			}, 'template/job/');
+
+		}
+	}
+
+	function publishActions()
+	{
+		$('.btns-job-list').on('click', '.btn-closed-job', closeJob);
+		$('.btns-job-list').on('click', '.btn-edit-job', editPost);
+		$('.btns-job-list').on('click', '.btn-preview-job', preview);
+	}
+
 	function publishJobReq(form, templateCon)
 	{
 		jobListRequest(form.serializeArray(), 
@@ -131,11 +183,12 @@ var JobList = (function($) {
 						});
 
 						$(templateCon).html(renderedtemp);
-						getApplicants(response.data.groupJobs);
 						
-					}, baseTemplateUrl);
+						getApplicants(response.data.groupJobs);
 
-					
+						publishActions();
+
+					}, baseTemplateUrl);					
 				}
 			});
 	}
@@ -170,6 +223,8 @@ var JobList = (function($) {
 
 							$(publishJobListCon).html(renderedtemp);
 
+							publishActions();
+
 						}, baseTemplateUrl);
 
 						getApplicants(response.data.groupJobs);
@@ -195,59 +250,28 @@ var JobList = (function($) {
 			});
 	}
 
-	function doClose(btnElem, jobGroupId) 
-	{
-		Http.ajaxButton({
-			url : apiUrl + 'job/close/' + jobGroupId,
-			type : 'GET',
-			dataType : 'json',
-			success : function(response) {
-				
-				if (response.success) {
-
-					$('#job-group-' + jobGroupId).hide('slow');
-
-					publishJobReq($('form[name=publish-search-form]'), 
-						'.publish-job-list-con');
-					
-					//console.log(response.data.msg);	
-				}
-			}		
-		}, $(btnElem), 'Closing job...');
-	}
-
-	function closeJob(btnElem, jobGroupId)
-	{
-		Template.get('#alert-msg-temp', '.alert-msg-temp-con', {
-			title: 'Alert!',
-			message: '<h3>Are you sure you want to close this job?</h3>',
-			backFunction: "JobList.doClose('" + btnElem + "', '" + jobGroupId + "')",
-			okBtn: 'Close this job',
-			closeFunction: null,
-			closeBtn: 'Cancel'
-		});
-
-		$('.alert-msg').modal('show');
-	}
-
-	
- 	function preview(job_group_id, post_status) 
+ 	function preview() 
  	{	
+ 		var $this = $(this);
+ 		var job_group_id = $this.data('options').jobGroupId;
+ 		var post_status = $this.data('options').jobPostStatus;
+ 		
  		var jobList = null;
-
  		if (post_status == 1) jobList = JobList.publishJobListArr[job_group_id];
 		if (post_status == 2) jobList = JobList.draftJobListArr[job_group_id];
 		if (post_status == 3) jobList = JobList.rejectJobListArr[job_group_id];
  		
- 		//console.log(jobList);
-
  		$('.jobs-list').hide();
 
  		Template.get('#preview-temp', '.preview-con', jobList);
  	}
 
-	function editPost(job_group_id, post_status) 
+	function editPost() 
 	{
+		var $this = $(this);
+		var job_group_id = $this.data('options').jobGroupId;
+		var post_status = $this.data('options').jobPostStatus;
+
 		var jobList = null;
 		if (post_status == 1) jobList = JobList.publishJobListArr;
 		if (post_status == 2) jobList = JobList.draftJobListArr;
@@ -278,6 +302,13 @@ var JobList = (function($) {
 		$('.jobs-list').show();
 	}
 
+	function draftActions()
+	{		
+		$('.btns-job-list').on('click', '.btn-publish-job', publish);
+		$('.btns-job-list').on('click', '.btn-edit-job', editPost);
+		$('.btns-job-list').on('click', '.btn-preview-job', preview);
+	}
+
 	function draftJobListReq(form, templateCon)
 	{
 		jobListRequest(form.serializeArray(), 
@@ -297,6 +328,9 @@ var JobList = (function($) {
 						});
 
 						$(templateCon).html(renderedtemp);
+						
+						draftActions();
+
 					}, baseTemplateUrl);
 
 				}
@@ -333,6 +367,8 @@ var JobList = (function($) {
 
 							$(draftTemplateCon).html(renderedtemp);
 
+							draftActions();
+
 						}, baseTemplateUrl);
 
 					}
@@ -360,6 +396,7 @@ var JobList = (function($) {
 						});
 
 						$(templateCon).html(renderedtemp);
+
 					}, baseTemplateUrl);
 
 				}
@@ -429,7 +466,7 @@ var JobList = (function($) {
 		var daraftTemplateCon = '.draft-job-list-con';
 
 		var jobs = JobList.draftJobListArr[job_group_id].jobs;
-		//var jobPostIds = { name: 'job_post_ids', value: [] };
+		
 		var postData = [] ;
 
 		_.each(jobs, function(job, index, list) {
@@ -438,7 +475,6 @@ var JobList = (function($) {
 		});
 
 		postData.push({ name: 'job_group_id', value: job_group_id });
-		//postData.push(jobPostIds);
 
 		Http.ajaxButton({
 			url: apiUrl + 'job/publish',
@@ -457,18 +493,27 @@ var JobList = (function($) {
 		//console.log(postData);
 	}
 
-	function publish(btnElem, jobGroupId) 
+	function publish() 
 	{
-		Template.get('#alert-msg-temp', '.alert-msg-temp-con', {
-			title: 'Alert!',
-			message: '<h3>Are you sure you want to publish this job?</h3>',
-			backFunction: "JobList.doPublish('" + btnElem + "', '" + jobGroupId + "')",
-			okBtn: 'Publish this job',
-			closeFunction: null,
-			closeBtn: 'Cancel'
-		});
+		var $this = $(this);
+		var jobGroupId = $this.data('options');
+		var btnPublish = '.btn-publish-' + jobGroupId;
 
-		$('.alert-msg').modal('show');
+		getTemplate('modal-temp.html', function(template) {
+			
+			var renderedtemp = template({
+				title: 'Alert!',
+				message: '<h3>Are you sure you want to publish this job?</h3>',
+				backFunction: "JobList.doPublish('" + btnPublish + "', '" + jobGroupId + "')",
+				okBtn: 'Publish this job',
+				closeFunction: null,
+				closeBtn: 'Cancel'
+			});
+
+			$('.alert-msg-temp-con').html(renderedtemp);
+			$('.alert-msg').modal('show');
+
+		}, 'template/job/');
 	}
 
 	// Get Template

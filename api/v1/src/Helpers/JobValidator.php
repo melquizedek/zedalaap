@@ -19,7 +19,7 @@ class JobValidator
 		
 	}
 
-	public function setDataToValidate($data) {
+	public function setDataToValidate($data = array(), $returnPostData = true) {
 
 		$errorMsg = array(); $this->formData = $data; $employment_type_id = null;
 
@@ -139,12 +139,16 @@ class JobValidator
 		}
 
 		$hasError = 0;
-		foreach($errorMsg['errorMsg'] as $val) 
-			if (!is_null($val)) $hasError++;
+		foreach($errorMsg['errorMsg'] as $val) {
+			if (!is_null($val)) 
+				$hasError++;
+		}
 
-		if ($hasError) return $errorMsg;
+		if ($hasError) 
+			return $errorMsg;
 
-		return $this->formData;
+		if ($returnPostData)
+			return $this->formData;
 	}
 
 	public function headline($val) {

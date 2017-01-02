@@ -165,19 +165,6 @@
     </div>
 </script>
 
-<!--<script type="text/template" id="date-duration-temp">
-	<label for="industry" class="col-md-4 control-label">
-        Duration</label>
-    <div class="col-md-2">
-        <input type="text" class="form-control" data-provide="datepicker"
-            name="jobs[job-<%= formID %>][duration_from]" placeholder="From">
-    </div>
-    <div class="col-md-2">
-        <input type="text" class="form-control" data-provide="datepicker"
-            name="jobs[job-<%= formID %>][duration_to]" placeholder="To">
-    </div>
-</script>-->
-
 <script type="text/template" id="view-applicants-temp">
     <h1><%= applicants.length %>
     <% if (type === "shortlisted") { %>
@@ -274,36 +261,4 @@
                 onclick="<%= backCallback %>">Back</a>
         </div>
     </div>
-</script>
-
-
-<script type="text/template" id="alert-msg-temp">
-    <div class="modal fade alert-msg" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"><%=title%></h4>
-          </div>
-          <div class="modal-body" style="text-align:center">
-            <p>
-                <%=message%>
-            </p>
-          </div>
-          <div class="modal-footer">
-            <% if (okBtn) { %>
-            <button type="button" class="btn btn-primary" 
-                onclick="<%=backFunction%>;" data-dismiss="modal">
-                <%=okBtn%></button>
-            <% } %>
-            <button type="button" class="btn btn-primary" data-dismiss="modal" 
-                    <% if(closeFunction) { %> 
-                        onclick="<%= closeFunction %>" 
-                    <% } %>
-                ><%= (closeBtn) ? closeBtn : 'Continue' %>    
-            </button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 </script>

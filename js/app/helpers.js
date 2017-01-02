@@ -1058,7 +1058,8 @@ var Helper = (function($){
 		doUploadProcess: doUploadProcess,
 		validateSaveAddMore: validateSaveAddMore,
 		formValidationMsg: formValidationMsg,
-		btnLoader: btnLoader
+		btnLoader: btnLoader,
+		getTemplate: getTemplate
 	};
 
 	// Get Template
@@ -1303,16 +1304,21 @@ function isHeadlinePhotoUploaded(backFunction)
 
 function saveAddMoreAlertMsg()
 {
-    Template.get('#alert-msg-temp', '.alert-msg-temp-con', {
-        title: 'Alert!',
-        message: "<h5>Please fill up required fields before adding more job position.</h5>",
-        okBtn: "Check Required Fields",
-        backFunction: 'gotoTop()',
-        closeFunction: null,
-        closeBtn: "Close",
-    });
+    Helper.getTemplate('modal-temp.html', function(template) {
 
-    $('.alert-msg').modal('show');
+		var renderedtemp = template({
+			title: 'Alert!',
+	        message: "<h5>Please fill up required fields before adding more job position.</h5>",
+	        okBtn: "Check Required Fields",
+	        backFunction: 'gotoTop()',
+	        closeFunction: null,
+	        closeBtn: "Close",
+		});
+
+		$('.alert-msg-temp-con').html(renderedtemp);
+		$('.alert-msg').modal('show');
+
+	}, 'template/job/');
 }
 
 function gotoTop()

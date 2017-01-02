@@ -19,7 +19,7 @@ return [
         // Database
         'db' => [
             'host' => 'localhost', // To change port, just add it afterwards like localhost:8889
-            'dbname' => 'jobs', // DB name or SQLite path
+            'dbname' => 'jobs', 
             'username' => 'root',
             'password' => ''
         ]
