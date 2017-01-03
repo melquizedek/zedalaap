@@ -49,9 +49,10 @@ $container['ResourcesController'] = function($c) {
 
 $container['JobController'] = function($c) {
     return new \App\Controllers\JobController($c->get('Job'), 
-        $c->get('Resources'), 
-        $c->get('JobHelper'), 
-        $c->get('PostingValidation'));
+            $c->get('Resources'), 
+            $c->get('JobHelper'), 
+            $c->get('PostingValidation')
+        );
 };
 
 $container['UploadController'] = function($c) {
@@ -100,7 +101,10 @@ $container['JobValidator'] = function ($c) {
 };
 
 $container['JobHelper'] = function ($c) {
-    return new App\Helpers\JobHelper($c->get('mainModel'));
+    return new App\Helpers\JobHelper($c->get('mainModel'),
+            $c->get('Job'),
+            $c->get('PostingValidation')
+        );
 };
 
 $container['PostingValidation'] = function ($c) {

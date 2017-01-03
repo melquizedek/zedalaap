@@ -216,10 +216,8 @@ var JobPartTime = (function($) {
        JobPartTime.formData.for_editing = JSON.stringify(forEditing);
 
         //if jobGroupId exist then do update process
-        if (typeof jobGroupID !== 'undefined') 
-        {
-            postingUrl = 'job/list/' + jobGroupID;
-            JobPartTime.formData._METHOD = 'PUT';
+        if (typeof jobGroupID !== 'undefined') {
+            postingUrl = 'job/update';
         }
 
         Helper.btnLoader('.btn-post', '', 'start');

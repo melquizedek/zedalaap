@@ -381,9 +381,9 @@ class Job extends Main
 			if (!empty($where)) $sql .= " WHERE {$where}";
 
 			$statement = $this->PDO->prepare($sql);            
-	        
-	        if ($statement->execute($params))
-	        	return true;
+	        $statement->execute($params);
+	        	
+	        return true;
 
 		} catch(PDOException $e) {
 			return false;

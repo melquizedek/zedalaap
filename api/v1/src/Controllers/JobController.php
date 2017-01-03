@@ -23,7 +23,7 @@ class JobController
 	protected $Resources;
 	protected $JobHelper;
 	protected $PostingValidation;
-
+	
 	public function __construct(Job $Job, Resources $Resources, 
 		JobHelper $JobHelper, PostingValidation $PostingValidation) {
 		$this->Job = $Job;
@@ -84,194 +84,12 @@ class JobController
 
 		$formData = $request->getParsedBody();
 		
-		$result = $this->doJobPosting($formData);
+		$result = $this->JobHelper->doJobPosting($formData);
 		
 		if ($result['success']) 
 			$result['data'] = "New added job has been successfully posted.";
 
 		return $response->withStatus(200)->withJson($result);
-	}
-
-	public function doJobPosting($formData=null, $job_group_id=null, $actionType="insert") {
-		
-		$job_group_id = null; 
-		$job_post_id = null; 
-		$insertToJobObjectStatus = null;
-		$insertToJobPostStatus = null;
-		
-		$result = array(
-			'success' => false,
-			'data' => null,
-			'validation' => false,
-		);
-
-		//posting data validation - START HERE
-		$error = array();
-		foreach ($formData as $fieldsToVal => $jobs) 
-		{
-			if ($fieldsToVal === "employment_type_id")
-				$employment_type_id = $jobs;
-
-			if ($fieldsToVal === "headline") {
-				$resultVali = $this->PostingValidation->headline($jobs);
-				if (!$resultVali[0]) 
-					array_push($error, $resultVali[1]);
-			}
-
-			if ($fieldsToVal === "headline_desc") {
-				$resultVali = $this->PostingValidation->description($jobs);
-				if (!$resultVali[0]) 
-					array_push($error, $resultVali[1]);
-			}
-
-			if ($fieldsToVal === "hiring_duration_from") {
-				$resultVali = $this->PostingValidation->hiringDurationFrom($jobs);
-				if (!$resultVali[0])
-					array_push($error, $resultVali[1]);
-			}
-
-			if ($fieldsToVal === "hiring_duration_to") {
-				$resultVali = $this->PostingValidation->hiringDurationTo($jobs);
-				if (!$resultVali[0])
-					array_push($error, $resultVali[1]);
-			}
-
-			if (is_array($jobs) AND $fieldsToVal === "jobs") {
-
-				foreach ($jobs as $fieldsToVal2 => $jobs2) 
-				{
-					$formNum = explode("-", $fieldsToVal2)[1];
-
-					foreach ($jobs2 as $key => $val) 
-					{
-						if ($key === "job_title") {
-							$resultVali	= $this->PostingValidation->jobTitle($val);
-							if (!$resultVali[0])
-								array_push($error, $resultVali[1]);
-						}
-
-						if ($key === "job_desc") {
-							$resultVali	= $this->PostingValidation->jobDesc($val);
-							if (!$resultVali[0])
-								array_push($error, $resultVali[1]);
-						}
-
-						if ($key === "salary") {
-							$resultVali	= $this->PostingValidation->salary($val);
-							if (!$resultVali[0])
-								array_push($error, $resultVali[1]);
-						}
-
-						if ($key === "currency_id") {
-							$resultVali	= $this->PostingValidation->currency($val);
-							if (!$resultVali[0])
-								array_push($error, $resultVali[1]);
-						}
-
-						if ($key === "yr_exp") {
-							$resultVali	= $this->PostingValidation->yrExp($val);
-							if (!$resultVali[0])
-								array_push($error, $resultVali[1]);
-						}
-
-						if ($employment_type_id == 2)
-						{
-							if ($key === "duration_from") {
-								$resultVali	= $this->PostingValidation->jobDurationFrom($val);
-								if (!$resultVali[0])
-									array_push($error, $resultVali[1]);
-							}
-
-							if ($key === "duration_to") {
-								$resultVali	= $this->PostingValidation->jobDurationTo($val);
-								if (!$resultVali[0])
-									array_push($error, $resultVali[1]);
-							}
-
-							if ($key === "durations") 
-							{	
-								foreach ($val as $timeStamp => $duraVal) 
-								{
-									foreach ($duraVal as $key => $val1) 
-									{
-										if (is_array($val1))
-										{		
-											foreach ($val1 as $val2)
-											{
-												if ($key === "duration_time_from") {
-													$resultVali	= $this->PostingValidation->durationTimeFrom($val2);
-													if (!$resultVali[0])
-														array_push($error, $resultVali[1]);
-												}
-
-												if ($key === "duration_time_to") {
-													$resultVali	= $this->PostingValidation->durationTimeTo($val2);
-													if (!$resultVali[0])
-														array_push($error, $resultVali[1]);			
-												}
-											}
-										}
-							
-									}
-								}
-
-							}
-
-						}
-
-						if ($employment_type_id == 3) {
-
-							if ($key === "duration_from") {
-								$resultVali	= $this->PostingValidation->jobDurationFrom($val);
-								if (!$resultVali[0])
-									array_push($error, $resultVali[1]);
-							}
-
-							if ($key === "duration_to") {
-								$resultVali	= $this->PostingValidation->jobDurationTo($val);
-								if (!$resultVali[0])
-									array_push($error, $resultVali[1]);		
-							}
-						}
-					}
-
-					$resultVali	= $this->PostingValidation->location("location", $jobs2);
-					if (!$resultVali[0])
-						array_push($error, $resultVali[1]);
-
-					$resultVali	= $this->PostingValidation->industry("industry", $jobs2);
-					if (!$resultVali[0])
-						array_push($error, $resultVali[1]);
-				}
-
-			}
-		}
-
-		// Return if there's error
-		if (!empty($error)) {
-			$result['data'] = $error;
-			return $result;
-		}
-		//posting data validation - END HERE
-
-		$formData['for_editing'] = addslashes(
-			json_encode($this->JobHelper->createFile($formData['for_editing'],
-		 		'json', 'html_db'))
-		);
-
-		$insertResult = $this->Job->insertAll($formData, $job_group_id, $this->JobHelper);
-
-		if ($insertResult['job_group_id'] && $insertResult['insertToJobPostStatus'] 
-			&& $insertResult['insertToJobObjectStatus']) {
-			
-			$result['success'] = true;
-			$result['validation'] = true;
-
-			if ($actionType === "update")
-				$result['job_group_id'] = $insertResult['job_group_id'];
-		}
-	
-		return $result;
 	}
 
 	public function getAppliedApplicant($request, $response, $args) {
@@ -442,7 +260,7 @@ class JobController
 		$result['data'] = $jobList;
 		$result['numJobs'] = $countJobs;
 
-		return $result;
+		return $response->withStatus(200)->withJson($result);
 	}
 
 	public function closeJob($request, $response, $args) 
@@ -471,28 +289,12 @@ class JobController
 		return $response->withStatus(200)->withJson($result);
 	}
 
-	public function getJob($request, $response, $args)
-	{
-		$result = array('success' => false, 'data' => null, 'numJobs' => 0);
-		
-		if ($request->isPost()) 
-		{
-			$result = $this->JobList($request, $response, $args);
-		}
-
-		if ($request->isPut())
-		{
-			$result = $this->updateJob($request, $response, $args);
-		}
-
-		return $response->withStatus(200)->withJson($result);
-	}
-
 	public function updateJob($request, $response, $args)
 	{
 		$result = array('success' => false, 'data' => null);
 
 		$postData = $request->getParsedBody();
+
 		$json_file_id = $postData['json_file_id'];	
 		$group_job_id = $postData['job_group_id'];
 		$jobs = $postData['jobs'];
@@ -521,7 +323,7 @@ class JobController
 		if (!empty($job_post_ids) && $jobGroupDel 
 				&& $jobPostDel && $jobPostObjectDel) {
 			
-			$result = $this->doJobPosting($postData, $group_job_id, "update");
+			$result = $this->JobHelper->doJobPosting($postData, $group_job_id, "update");
 
 			if ($result['success']) {
 				$this->JobHelper->deleteFile($json_file_id . '.json', 'html_db');
@@ -529,7 +331,7 @@ class JobController
 			}
 		}			
 
-		return $result;
+		return $response->withStatus(200)->withJson($result);
 	}
 
 	function publish($request, $response, $args) 

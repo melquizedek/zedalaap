@@ -344,10 +344,8 @@ var JobFulltime = (function($) {
         JobFulltime.formData.for_editing = JSON.stringify(forEditing);
 
         //for updating job
-        if (typeof jobGroupID !== 'undefined') 
-        {
-            postingUrl = 'job/list/' + jobGroupID;
-            JobFulltime.formData._METHOD = 'PUT';
+        if (typeof jobGroupID !== 'undefined') { 
+            postingUrl = 'job/update';
         }
 
         JobFulltime.formData.employment_type_text = 'Fulltime';

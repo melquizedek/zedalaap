@@ -173,10 +173,8 @@ var JobTemporary = (function ($) {
         var url = 'job/posting';
 
         //if jobGroupId exist then do update process
-        if (typeof jobGroupID !== 'undefined') 
-        {
-            url = 'job/list/' + jobGroupID;
-            JobTemporary.formData._METHOD = 'PUT';
+        if (typeof jobGroupID !== 'undefined') { 
+            url = 'job/update';
         }
 
         //create ajax button with loader

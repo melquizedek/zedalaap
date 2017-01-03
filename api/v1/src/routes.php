@@ -73,15 +73,14 @@ $app->group('/resources', function () {
 /* Routes for Job posting functionality
 ======================================= */
 $app->group('/job', function() {
-	
-	$this->group('/list[/{group_job_id}]', function() {
-		$this->map(['GET', 'POST', 'PUT'], '', 'JobController:getJob');
-	});
 
-	$this->get('/close/{group_job_id}', 'JobController:closeJob');
+	$this->post('/list', 'JobController:jobList');
+	$this->post('/update', 'JobController:updateJob');
 	$this->post('/posting', 'JobController:postJob');
 	$this->post('/publish', 'JobController:publish');
 	$this->post('/suggested', 'JobController:shortListedFulltime');
+
+	$this->get('/close/{group_job_id}', 'JobController:closeJob');
 
 	$this->group('/applicants', function() {
 		$this->post('/shortlisted', 'JobController:getAppliedApplicant');
@@ -104,6 +103,5 @@ $app->map(['POST', 'GET'], '/to-json-encode', function($request, $response, $arg
 /* Routes Api for file uploading
 ======================================= */
 $app->group('/file', function() {
-	//sleep(6);
 	$this->post('/upload', 'UploadController:doUpload');
 });
