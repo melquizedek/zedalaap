@@ -4,8 +4,12 @@ var FileUploader = (function($) {
 		var imgUrl = null;
 		var filesInfo = null;
 		var canvasElem = null;
+		var fileLength = 0;
+		var inProgress = "";
 
 		return {
+			fileLength: fileLength,
+			inProgress: "",
 			imgUrl: imgUrl,
 			filesInfo: filesInfo,
 			template: template,
@@ -59,17 +63,7 @@ var FileUploader = (function($) {
 
 		        });
 
-				/*.on('fileuploadadd', function (e, data) {
-	    			
-	    			//FileUploader.reset();
-
-	    			//var file = data.files[0];
-
-			        imgToUpload.html('<span>' + file.name + '</span><br/>')
-				        .append(uploadButton.clone(true).data(data));
-
-			    })*/
-
+				
 		    var fileUploader = $(fileInput).fileupload({
 			        url: apiUrl + 'file/upload',
 			        dataType: 'json',
@@ -82,6 +76,16 @@ var FileUploader = (function($) {
 			        disableImageResize: /Android(?!.*Chrome)|Opera/
 			            .test(window.navigator.userAgent)
 		    	})
+		    	/*.on('fileuploadadd', function (e, data) {
+	    			
+	    			//FileUploader.reset();
+
+	    			//var file = data.files[0];
+
+			        imgToUpload.html('<span>' + file.name + '</span><br/>')
+				        .append(uploadButton.clone(true).data(data));
+
+			    })*/
 		    	.on('fileuploadprocessalways', function (e, data) {
 		    		
 			        var index = data.index;
@@ -93,10 +97,9 @@ var FileUploader = (function($) {
 			        	btnUpload
 			        		.text(file.error)
 			        		.addClass('disabled btn-danger');
-
 			        	return false;
 			        }
-
+			        
 			        if (file.preview) {
 			        	
 			        	$('.file-to-upload').empty();
@@ -117,8 +120,13 @@ var FileUploader = (function($) {
 			            FileUploader.filesInfo = file;
 			        }
 
-			        if (data.files.length)
-		                btnUpload.text('Upload')   	
+			        if (data.files.length) {
+
+			        	FileUploader.inProgress = 'start';
+			        	FileUploader.fileLength = data.files.length;
+
+		                btnUpload.text('Upload');
+			        }
 			    	
 				})
 		    	.on('fileuploadprogressall', function (e, data) {
@@ -126,7 +134,6 @@ var FileUploader = (function($) {
 			        
 			        jqUploadProgbar.find('.progress-bar')
 			        	.css('width', progress + '%');
-
 		    	})
 		    	.on('fileuploaddone', function (e, data) {
 			        $.each(data.result.files, function (index, file) {
@@ -145,17 +152,19 @@ var FileUploader = (function($) {
 			                			.attr('value', file.name);
 			                    }
 
-
-
 			            } else if (file.error) {
 
 			                var error = $('<span class="text-danger"/>').text(file.error);
 			                imgToUpload.append(error);
 			            }
 
-			            jqUploadProgbar.find('.progress-bar')
-			            	.css('width', '0px');
-			            jqUploadProgbar.hide();
+			            jqUploadProgbar
+			            	.find('.progress-bar')
+			            	.css('width', '0px')
+			            	.hide();
+
+			            FileUploader.fileLength = 0;
+			            FileUploader.inProgress = 'done';
 
 			        });
 

@@ -1127,7 +1127,7 @@ var Helper = (function($){
             });
 	}
 
-	function btnLoader(btn, origLbl, eventType)
+	function btnLoader(btn, label, eventType)
 	{
 		btn = $.trim(btn).length ? btn : null;
 	
@@ -1135,14 +1135,14 @@ var Helper = (function($){
 			
 			if(eventType === "start") {
 				$(btn)
-					.text("Processing...")
+					.text(label || "Processing...")
 					.prepend('<i class="fa fa-spin fa-circle-o-notch"></i> ')
 					.addClass('disabled');
 			};
 
 			if(eventType === "complete") {
 				$(btn)
-					.text(origLbl)
+					.text(label)
 					.removeClass('disabled');
 			}
 		}

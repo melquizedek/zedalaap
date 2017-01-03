@@ -104,5 +104,6 @@ $app->map(['POST', 'GET'], '/to-json-encode', function($request, $response, $arg
 /* Routes Api for file uploading
 ======================================= */
 $app->group('/file', function() {
+	//sleep(6);
 	$this->post('/upload', 'UploadController:doUpload');
 });

@@ -88,27 +88,39 @@ var JobPartTime = (function($) {
 
             JobPartTime.formData.file_name = responseData.file_name;
 
+            Template.get('#part-time-preview', 
+                            '.part-time-preview-con',
+                            previewTempData);
+
             //check if their is an image to upload - then do upload 
-            $.when(Helper.doUploadProcess(JobPartTime.fileUploader))
-                .done(function (response) {
+            if (FileUploader.fileLength) 
+            {
+                $.when(Helper.doUploadProcess(JobPartTime.fileUploader))
+                    .done(function (response) {
+                            
+                        var filename = response.data.name;
+                        previewTempData.file_name = filename;
+                        JobPartTime.formData.file_name = filename;
 
-                    var filename = response.data.name;
-                    previewTempData.file_name = filename;
-                    JobPartTime.formData.file_name = filename;
+                        Template.get('#part-time-preview', 
+                            '.part-time-preview-con',
+                            previewTempData);
 
-                    Template.get('#part-time-preview', 
-                        '.part-time-preview-con',
-                        previewTempData);
-                })
-                .fail(function (response) {
-                    console.log(response.data)
-                })
-                .progress(function (response) {
+                        console.log(FileUploader.fileLength, FileUploader.inProgress);
+                        
+                        if (FileUploader.inProgress === 'done')
+                            Helper.btnLoader('.btn-post', 'Post', 'complete');
 
-                    Template.get('#part-time-preview', 
-                        '.part-time-preview-con',
-                        previewTempData);
-                });
+                    })
+                    .fail(function (response) {
+                        console.log(response.data)
+                    })
+                    .progress(function (response) {
+                        console.log(FileUploader.fileLength, FileUploader.inProgress);
+                        if (FileUploader.inProgress === 'start')
+                            Helper.btnLoader('.btn-post', "Photo Headline Uploading...", 'start');
+                    });
+            }
             
         }
 

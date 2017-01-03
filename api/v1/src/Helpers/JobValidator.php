@@ -14,10 +14,7 @@ class JobValidator
 	
 	protected $formData;
 
-	function __construct()
-	{
-		
-	}
+	function __construct(){}
 
 	public function setDataToValidate($data = array(), $returnPostData = true) {
 

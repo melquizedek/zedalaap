@@ -9,70 +9,74 @@ namespace App\Models;
 
 use App\Models\Main;
 use PDO;
-use Exception;
 
 class Job extends Main
 {
-	
+	var $PDO;
+
 	function __construct(PDO $db)
 	{
+		$this->PDO = $db;
 		parent::__construct($db);
 	}
 
-	
 	public function insertToJobGroup($dataArr=array(), $job_group_id=null) 
 	{
-		
-		$job_group_id = ($job_group_id) ? $job_group_id : $this->getUniqueId();
-		
-		$fieldsArr = array();
-		$valuesArr = array();
+		try {
+			
+			$job_group_id = ($job_group_id) ? $job_group_id : $this->getUniqueId();
+			
+			$fieldsArr = array();
+			$valuesArr = array();
 
-		foreach ($dataArr as $key => $value) {
+			foreach ($dataArr as $key => $value) {
 
-			$fieldsArr[] = $key;
-			$valuesArr[] = '"' . $value . '"';
-		}
+				$fieldsArr[] = $key;
+				$valuesArr[] = '"' . $value . '"';
+			}
 
-		$fields = "job_group_id," . implode(",", $fieldsArr);
-		$values = "'{$job_group_id}'," . implode(",", $valuesArr);
+			$fields = "job_group_id," . implode(",", $fieldsArr);
+			$values = "'{$job_group_id}'," . implode(",", $valuesArr);
 
-		$sql = "INSERT INTO i_job_group ({$fields}) VALUES ({$values})";
+			$sql = "INSERT INTO i_job_group ({$fields}) VALUES ({$values})";
 
-		$statement = $this->PDO->prepare($sql);
-		
-		if (!$statement->execute()) {
+			$statement = $this->PDO->prepare($sql);
+			$statement->execute();
+
+			return $job_group_id;
+
+		} catch(PDOException $e) {
 			return false;
 		}
-
-		return $job_group_id;
 	}
 
 	public function insertToJobPost($dataArr=array(), $job_post_id=null) {
 		
-		$job_post_id = ($job_post_id) ? $job_post_id : $this->getUniqueId();
+		try {
+			$job_post_id = ($job_post_id) ? $job_post_id : $this->getUniqueId();
 
-		$fieldsArr = array();
-		$valuesArr = array();
+			$fieldsArr = array();
+			$valuesArr = array();
 
-		foreach ($dataArr as $key => $value) {
+			foreach ($dataArr as $key => $value) {
 
-			$fieldsArr[] = $key;
-			$valuesArr[] = '"' . $value . '"';
-		}
+				$fieldsArr[] = $key;
+				$valuesArr[] = '"' . $value . '"';
+			}
 
-		$fields = "job_post_id," . implode(",", $fieldsArr);
-		$values = '"' . $job_post_id . '",' . implode(",", $valuesArr);
+			$fields = "job_post_id," . implode(",", $fieldsArr);
+			$values = '"' . $job_post_id . '",' . implode(",", $valuesArr);
 
-		$sql = "INSERT INTO i_job_post ({$fields}) VALUES ({$values})";
-		//echo $sql; exit;
-		$statement = $this->PDO->prepare($sql);
-		
-		if (!$statement->execute()) {
+			$sql = "INSERT INTO i_job_post ({$fields}) VALUES ({$values})";
+			
+			$statement = $this->PDO->prepare($sql);
+			$statement->execute();
+
+			return $job_post_id;
+
+		} catch(PDOException $e) {
 			return false;
 		}
-
-		return $job_post_id;
 	}
 
 	public function updateIsDeleted($where = null) 
@@ -91,28 +95,30 @@ class Job extends Main
 	}
 
 	public function insertToJobObject($dataArr=array()) {
+
+		try {
+			$fieldsArr = array();
+			$valuesArr = array();
+
+			foreach ($dataArr as $key => $value) {
+
+				$fieldsArr[] = $key;
+				$valuesArr[] = "'" . $value . "'";
+			}
+
+			$fields = implode(",", $fieldsArr);
+			$values = implode(",", $valuesArr);
+
+			$sql = "INSERT INTO i_job_object ({$fields}) VALUES ({$values})";
+
+			$statement = $this->PDO->prepare($sql);
+			$statement->execute();
 		
-		$fieldsArr = array();
-		$valuesArr = array();
+			return true;
 
-		foreach ($dataArr as $key => $value) {
-
-			$fieldsArr[] = $key;
-			$valuesArr[] = "'" . $value . "'";
-		}
-
-		$fields = implode(",", $fieldsArr);
-		$values = implode(",", $valuesArr);
-
-		$sql = "INSERT INTO i_job_object ({$fields}) VALUES ({$values})";
-
-		$statement = $this->PDO->prepare($sql);
-		
-		if (!$statement->execute()) {
+		} catch(PDOException $e) {
 			return false;
 		}
-
-		return true;
 	}
 
 	public function getApplicantApplied($fields="", $where="", $params=array()) {
@@ -386,23 +392,159 @@ class Job extends Main
 
 	function deleteFrom($table="", $params="") {
 		
-		$result = false;
-
 		try {
 			
 			$sql = "DELETE FROM {$table} WHERE job_group_id = :job_group_id";
 
 			$statement = $this->PDO->prepare($sql);
-			
-			if ($statement->execute($params))
-				$result = true;
+			$statement->execute($params);
+			return true;
 
 		} catch(PDOException $e) {
 
-			throw new PDOException("Error found at Job:deleteFrom - " . $e->getMessage());
+			return false;
+		}
+	}
+
+	public function insertAll($formData=null, $job_group_id=null, $jobHelper=null) 
+	{
+		$job_group_id = null; 
+		$job_post_id = null; 
+		$insertToJobObjectStatus = false;
+		$insertToJobPostStatus = false;
+
+		$result = array(
+			'job_group_id' => $job_group_id,
+			'insertToJobPostStatus' => $insertToJobPostStatus,
+			'insertToJobObjectStatus' => $insertToJobObjectStatus
+		);
+
+		$this->PDO->beginTransaction();
+
+		$employment_type_id = $formData['employment_type_id'];
+		$employment_type_text = $formData['employment_type_text'];
+
+		$job_group_name = isset($formData['headline']) ? $formData['headline'] : null;
+		$description = isset($formData['headline_desc']) ? $formData['headline_desc'] : null;
+
+		$job_group = array();
+		$job_group['post_type_id'] = $formData['post_type_id'];
+		$job_group['employment_type_id'] = $employment_type_id;
+		$job_group['job_group_name'] = $job_group_name;
+		$job_group['description'] = $description;
+		$job_group['cover_photo'] = isset($formData['file_name']) ? $formData['file_name'] : null;
+		$job_group['duration_start'] = $formData['hiring_duration_from'];
+		$job_group['duration_end'] = $formData['hiring_duration_to'];
+		$job_group['industry'] = $jobHelper->makeJsonStr($formData['jobs'], "industry_text_json");
+		$job_group['date_created'] = $jobHelper->getDateTime();
+		$job_group['for_editing'] = $formData['for_editing'];
+
+		//echo '<pre>'; var_dump($job_group);exit;
+
+		$job_group_id = $this->insertToJobGroup($job_group, $job_group_id);
+		if (!$job_group_id) {
+			$this->PDO->rollBack();
+		}
+		
+		$job_details = json_encode(array(
+			'job_group_name' => htmlspecialchars($job_group_name, ENT_QUOTES),
+			'description' => htmlspecialchars($description, ENT_QUOTES),
+		));
+
+		$job_post_id = ""; $job_post = array(); $job_post_ids = array(); $job_object = array();
+
+		foreach ($formData['jobs'] as $job) {
+			
+			if (!isset($job['job_title']) || !isset($job['industry_text_json'])) continue;
+
+			$job_post_id = isset($job['job_post_id']) ? $job['job_post_id'] : null;
+
+			$job_post = array(
+				'employment_type_id' => $employment_type_id,
+				'job_group_id' => $job_group_id,
+				'job_title' =>  $job['job_title'],
+				'salary' => $job['salary'],
+				'currency_id' => $job['currency_id'],
+				'post_status' => $job['post_status_id'],
+				'job_description' => $job['job_desc'],
+				'yr_exp' => $job['yr_exp'],
+				'date_created' => $jobHelper->getDateTime(),
+			);
+
+			if ($employment_type_id == 2) {
+				$job_post['job_duration_start'] = $job['duration_from'];
+				$job_post['job_duration_end'] = $job['duration_to'];
+				$job_post['day_time'] = addslashes($job['day_time']);
+			}
+
+			if ($employment_type_id == 3) {
+				$job_post['job_duration_start'] = $job['duration_from'];
+				$job_post['job_duration_end'] = $job['duration_to'];
+			}
+
+			$job_post_id = $insertToJobPostStatus = $this->insertToJobPost($job_post, $job_post_id);
+			if (!$insertToJobPostStatus) {
+				$this->PDO->rollBack();
+			}
+			
+			$job_object = array(
+				'job_post_id' => $job_post_id,
+				'employment_type' => $employment_type_text,
+				'job_post_id' => $job_post_id,
+				'job_group_id' => $job_group_id,
+				'job_details' => $job_details,
+				'duration_start' => $job_group['duration_start'],
+				'duration_end' => $job_group['duration_end'],
+				'salary' => $job['salary'],
+				'currency_code' =>  $job['currency_text'],
+				'job_industries' => "[" . implode(",", $job['industry_text']) . "]",
+				'country_location' => "[" . implode(",", $job['location_text']) . "]",
+				'date_created' => $jobHelper->getDateTime(),
+			);
+
+			
+			if ($employment_type_id == 2) {
+				$job_object['job_duration_start'] = $job['duration_from'];
+				$job_object['job_duration_end'] = $job['duration_to'];
+				$job_object['day_time'] = addslashes($job['day_time']);
+			}
+
+			if ($employment_type_id == 3) {
+				$job_object['job_duration_start'] = $job['duration_from'];
+				$job_object['job_duration_end'] = $job['duration_to'];
+			}
+
+			$insertToJobObjectStatus = $this->insertToJobObject($job_object, $job_post_id);
+			if (!$insertToJobObjectStatus) {
+				$this->PDO->rollBack();
+			}
+
+			$job_post = array(); $job_post_id = ""; $job_object = array();
+		}
+
+		if ($job_group_id && $insertToJobPostStatus && $insertToJobObjectStatus) {
+			
+			$this->PDO->commit();
+
+			return array(
+				'job_group_id' => $job_group_id,
+				'insertToJobPostStatus' => $insertToJobPostStatus,
+				'insertToJobObjectStatus' => $insertToJobObjectStatus
+			);
 		}
 
 		return $result;
 	}
 
+	public function startTransaction() {
+		$this->PDO->beginTransaction();
+	}
+
+	public function commit() {
+		$this->PDO->commit();
+	}
+
+	public function rollback() {
+		$this->PDO->rollBack();
+	}
 }
