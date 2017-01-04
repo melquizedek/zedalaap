@@ -964,9 +964,7 @@ function createSearchKeys(jobGroups, jobPostId)
 				var jobPostId = $this.data(options.dataAttr);
 				var data = createSearchKeys(options.jobGroups, jobPostId);
 				var currentIndex = shortlistedBtnViews.index($this);
-
 				var currentAppliedBtnViews = $(appliedBtnViews.eq(currentIndex));
-				//console.log('currentIndex', currentIndex);
 
 				$.ajax({
 					type: 'POST',
@@ -977,7 +975,7 @@ function createSearchKeys(jobGroups, jobPostId)
 
 						var serverResponse = response.data;
 
-						if (response.success) {	console.log(serverResponse.job_details);
+						if (response.success) {	//console.log(serverResponse.job_details);
 
 							var searchKeys = data.searchKeys.replace(/(['])+/g, "\\'");
 							var applicants = getApplicants(serverResponse, searchKeys);

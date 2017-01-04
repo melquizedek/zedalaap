@@ -398,6 +398,7 @@ class Job extends Main
 
 			$statement = $this->PDO->prepare($sql);
 			$statement->execute($params);
+			
 			return true;
 
 		} catch(PDOException $e) {
@@ -408,7 +409,6 @@ class Job extends Main
 
 	public function insertAll($formData=null, $job_group_id=null, $jobHelper=null) 
 	{
-		$job_group_id = null; 
 		$job_post_id = null; 
 		$insertToJobObjectStatus = false;
 		$insertToJobPostStatus = false;
