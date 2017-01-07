@@ -8,24 +8,21 @@
             
             <div class="col-md-3">
                 <input type="checkbox" 
-                    class="time-input-enable-<%= appendId %>" 
+                    data-options='{"formId" : "<%= formId %>", "timeStamp": "<%= date.timeStamp %>"}'
+                    class="time-input-enable-<%= appendId %> time-input-enable" 
                     name="jobs[job-<%= formId %>][durations][<%= date.timeStamp %>][duration_time_enable]"
                     data-index="<%= date.timeStamp %>-<%= addedTimeId %>"
-                    onclick="DateHelper.disabledDayTime(this, <%= formId %>, <%= date.timeStamp %>)"
                     checked="checked">
                 <%= date.label %>
             </div>
 
             <div class="col-md-6" style="text-align: center;">
                 <a href="javascript:void(0);"
-                    class="btn-add-newsched-<%= appendId %>"
-                    data-add-newsched-info="<%= date.timeStamp %>|<%= date.label %>|<%= date.dateStr %>|<%= date.day %>|<%= addedTimeId %>"
-                    onclick="DateHelper.addTimeRange(<%= formId %>,
-                        <%= date.timeStamp %>,
-                        '.time-input-<%= formId %>-<%= date.timeStamp %>',
-                        '<%= date.label %>',
-                        '<%= date.dateStr %>',
-                        '<%= date.day %>');" >
+                    data-options='{"formId":"<%=formId%>","timeStamp":"<%= date.timeStamp %>",
+                        "label":"<%= date.label %>","dateStr":"<%= date.dateStr %>","day":"<%= date.day %>"}'
+                    class="btn-add-newsched btn-add-newsched-<%= appendId %>"
+                    data-add-newsched-info="<%= date.timeStamp %>|<%= date.label %>|
+                        <%= date.dateStr %>|<%= date.day %>|<%= addedTimeId %>">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                         Add Schedule For this Date
                  </a>
@@ -66,16 +63,15 @@
                         placeholder="00:00 PM">
             </div>
             
-            <div class="col-md-1 btn-time-remove-<%= appendId %>">
-                <a href="javascript:void(0);" 
-                    onclick="DateHelper.removeTimeRange('.time-input-con-<%= appendId %>',
-                        '.time-input-<%= formId %>-<%= date.timeStamp %>');">
-
-                         <i class="fa fa-times" aria-hidden="true"></i>
-                     </a>
+            <div class="col-md-1">
+                <a href="javascript:void(0);" class="btn-time-remove" 
+                    data-options='{"formId":"<%= formId %>", "timeStamp":"<%= date.timeStamp %>", "appendId":"<%= appendId %>"}'>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
             </div>
 
         </div>
+
         <br/>
     <% }) %>
 </script>
@@ -121,12 +117,11 @@
                         placeholder="00:00 PM">
             </div>
             
-            <div class="col-md-1 btn-time-remove-<%= appendId %>">
-                <a href="javascript:void(0);" 
-                    onclick="DateHelper.removeTimeRange('.time-input-con-<%= appendId %>',
-                        '.time-input-<%= formId %>-<%= timeStamp %>');">
-                         <i class="fa fa-times" aria-hidden="true"></i>
-                     </a>
+            <div class="col-md-1 con-time-remove-<%= appendId %>">
+                <a href="javascript:void(0);" class="btn-time-remove"
+                    data-options='{"formId":"<%= formId %>", "timeStamp":"<%= timeStamp %>", "appendId":"<%= appendId %>"}'>
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
             </div>
 
         </div>
@@ -195,12 +190,8 @@
             </div>
             <div class="col-md-12 col-md-offset-10">
                 <div class="form-group">
-                    <a href="javascript:void(0);" class="btn btn-primary" 
-                        onclick="JobPartTime.previewBack();">Back</a>
-                    <a href="javascript:void(0);" class="btn btn-primary btn-post" 
-                        onclick="JobPartTime.posting();">
-                        Post
-                    </a>
+                    <a href="javascript:void(0);" class="btn btn-primary btn-preview-back">Back</a>
+                    <a href="javascript:void(0);" class="btn btn-primary btn-post">Post</a>
                 </div>
             </div>
         </form>

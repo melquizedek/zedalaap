@@ -270,7 +270,7 @@ var JobFulltime = (function($) {
                 });
         } 
         else {
-            groupPostTemp();            
+            groupPostTemp();      
         }
     }
 
@@ -292,7 +292,9 @@ var JobFulltime = (function($) {
             );
 
             Helper.number('.number-only');
-            captureFormInputVal();            
+            removeSaveAddMore();
+            captureFormInputVal();
+
         }, baseTemplateUrl);
     }
 
@@ -398,6 +400,14 @@ var JobFulltime = (function($) {
             $('.add-new-job-con').addClass('hidden');
             $('.fulltime-preview-con').removeClass('hidden');
 
+            $('.btn-preview-back').on('click', function() {
+                fulltimePreviewBack();
+            });
+
+            $('.btn-post').on('click', function() {
+                posting($(this));
+            })
+
         }, baseTemplateUrl);
     }
 
@@ -461,10 +471,13 @@ var JobFulltime = (function($) {
         }
     }
 
-    function removeSaveAddMore(elem) 
+    function removeSaveAddMore() 
     {
-        if ($('.added-job-form').length > 1) 
-            $(elem).parent().parent().remove();
+        $('.added-job-form').on('click', '.btn-remove-added-form', 
+            function() {
+                if ($('.added-job-form').length > 1) 
+                    $(this).parent().parent().remove();
+            });
     }
 
     function saveAddMore () 
@@ -511,7 +524,7 @@ var JobFulltime = (function($) {
                         'currency_text');
 
                     captureFormInputVal();
-
+                    removeSaveAddMore();
                     Helper.number('.number-only');
 
                     formID++;

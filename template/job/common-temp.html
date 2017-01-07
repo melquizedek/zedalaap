@@ -199,7 +199,7 @@
 
             <% if (job.employment_type_id == 2) { %>
                 <br/>
-                <b><%= makeDurationDate(job.day_time, 'database') %></b>
+                <b><%= Helper.makeDurationDate(job.day_time) %></b>
             <% } %>
             </p>
             
@@ -257,8 +257,7 @@
         <div class="col-md-12"><hr/></div>
         <div class="col-md-2 col-md-offset-10">
             <a href="javascript:void(0)"
-                class="btn btn-primary applicant-view-back"
-                onclick="<%= backCallback %>">Back</a>
+                class="btn btn-primary applicant-view-back">Back</a>
         </div>
     </div>
 </script>

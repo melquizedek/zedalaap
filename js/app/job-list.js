@@ -145,14 +145,16 @@ var JobList = (function($) {
 				var renderedtemp = template({
 					title: 'Alert!',
 					message: '<h3>Are you sure you want to close this job?</h3>',
-					backFunction: "JobList.doClose('" + btnClose + "', '" + jobGroupId + "')",
 					okBtn: 'Close this job',
-					closeFunction: null,
 					closeBtn: 'Cancel'
 				});
 
 				$('.alert-msg-temp-con').html(renderedtemp);
 				$('.alert-msg').modal('show');
+
+				$('.btn-modal-back').on('click', function() {
+					doClose(btnClose, jobGroupId);
+				});
 
 			}, 'template/job/');
 
@@ -504,14 +506,16 @@ var JobList = (function($) {
 			var renderedtemp = template({
 				title: 'Alert!',
 				message: '<h3>Are you sure you want to publish this job?</h3>',
-				backFunction: "JobList.doPublish('" + btnPublish + "', '" + jobGroupId + "')",
 				okBtn: 'Publish this job',
-				closeFunction: null,
 				closeBtn: 'Cancel'
 			});
 
 			$('.alert-msg-temp-con').html(renderedtemp);
 			$('.alert-msg').modal('show');
+
+			$('.btn-modal-back').on('click', function() {
+				doPublish(btnPublish, jobGroupId);
+			});
 
 		}, 'template/job/');
 	}

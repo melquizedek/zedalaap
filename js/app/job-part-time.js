@@ -29,6 +29,7 @@ var JobPartTime = (function($) {
     {
         $(".panel-heading").on("click", "#btn-single-job", jobSinglePosting);
         $(".panel-heading").on("click", "#btn-group-job", jobGroupPosting);
+        $(".btn-job-group-post").on('click',".btn-save-more-addmore", addSaveAddMore);
         $(".add-new-job-con").on('submit',"form[name=add-new-job-form]", preview);
     }
 
@@ -91,7 +92,8 @@ var JobPartTime = (function($) {
             Template.get('#part-time-preview', 
                             '.part-time-preview-con',
                             previewTempData);
-
+            previewBack();
+            posting();
             //check if their is an image to upload - then do upload 
             if (FileUploader.fileLength) 
             {
@@ -105,8 +107,10 @@ var JobPartTime = (function($) {
                         Template.get('#part-time-preview', 
                             '.part-time-preview-con',
                             previewTempData);
-
-                        console.log(FileUploader.fileLength, FileUploader.inProgress);
+                        previewBack();
+                        posting();
+                        
+                        //console.log(FileUploader.fileLength, FileUploader.inProgress);
                         
                         if (FileUploader.inProgress === 'done')
                             Helper.btnLoader('.btn-post', 'Post', 'complete');
@@ -116,7 +120,9 @@ var JobPartTime = (function($) {
                         console.log(response.data)
                     })
                     .progress(function (response) {
+                        
                         console.log(FileUploader.fileLength, FileUploader.inProgress);
+
                         if (FileUploader.inProgress === 'start')
                             Helper.btnLoader('.btn-post', "Photo Headline Uploading...", 'start');
                     });
@@ -184,60 +190,61 @@ var JobPartTime = (function($) {
         return jobsArrNew;
     }
 
-	function posting() {
-        
-        //store searckeys to a storage in able to use it on next page  
-        var searchKeys = createSearchkeys();
-        localStorage.setItem('searchKeys', JSON.stringify(searchKeys));
- 
-        var forEditing = {
-            html : getDOMContent(),
-            selectOptsLocation : [],
-            selectOptsIndustry : [],
-            selectOptsCurrencies : []
-        };
+	function posting()
+    {    
+        $('.btn-post').on('click', function() {
+            //store searckeys to a storage in able to use it on next page  
+            var searchKeys = createSearchkeys();
+            localStorage.setItem('searchKeys', JSON.stringify(searchKeys));
+     
+            var forEditing = {
+                html : getDOMContent(),
+                selectOptsLocation : [],
+                selectOptsIndustry : [],
+                selectOptsCurrencies : []
+            };
 
-        $.each($('select[id^=location]'), function(index, elem) {
-            var opts = $(elem).html();
-            forEditing.selectOptsLocation.push(opts); 
-        });
+            $.each($('select[id^=location]'), function(index, elem) {
+                var opts = $(elem).html();
+                forEditing.selectOptsLocation.push(opts); 
+            });
 
-        $.each($('select[id^=industry]'), function(index, elem) {
-            var opts = $(elem).html();
-            forEditing.selectOptsIndustry.push(opts);
-        });
+            $.each($('select[id^=industry]'), function(index, elem) {
+                var opts = $(elem).html();
+                forEditing.selectOptsIndustry.push(opts);
+            });
 
-        $.each($('select[id^=currency]'), function(index, elem) {
-            var opts = $(elem).html();
-            forEditing.selectOptsCurrencies.push(opts);
-        });
+            $.each($('select[id^=currency]'), function(index, elem) {
+                var opts = $(elem).html();
+                forEditing.selectOptsCurrencies.push(opts);
+            });
 
-        //put here additional post data 
-       JobPartTime.formData.for_editing = JSON.stringify(forEditing);
+            //put here additional post data 
+           JobPartTime.formData.for_editing = JSON.stringify(forEditing);
 
-        //if jobGroupId exist then do update process
-        if (typeof jobGroupID !== 'undefined') {
-            postingUrl = 'job/update';
-        }
-
-        Helper.btnLoader('.btn-post', '', 'start');
-
-        $.ajax({
-            type: 'POST',
-            url: apiUrl + postingUrl,
-            cache: false,
-            data : JobPartTime.formData,
-            success : function(response) {
-                
-                Helper.btnLoader('.btn-post', 'Post', 'complete');
-
-                if (response.success) {
-                    window.location.href = 
-                        "short-listed.php?employment_type_id=2";
-                }
+            //if jobGroupId exist then do update process
+            if (typeof jobGroupID !== 'undefined') {
+                postingUrl = 'job/update';
             }
-        });
 
+            Helper.btnLoader('.btn-post', '', 'start');
+
+            $.ajax({
+                type: 'POST',
+                url: apiUrl + postingUrl,
+                cache: false,
+                data : JobPartTime.formData,
+                success : function(response) {
+                    
+                    Helper.btnLoader('.btn-post', 'Post', 'complete');
+
+                    if (response.success) {
+                        window.location.href = 
+                            "short-listed.php?employment_type_id=2";
+                    }
+                }
+            });
+        });
     }
 
     function getDOMContent() 
@@ -251,8 +258,10 @@ var JobPartTime = (function($) {
 
 	function previewBack() 
 	{
-		$('.part-time-preview-con').addClass('hidden');
-		$('.add-new-job-con').removeClass('hidden');
+        $('.btn-preview-back').on('click', function() {
+            $('.part-time-preview-con').addClass('hidden');
+            $('.add-new-job-con').removeClass('hidden');
+        });
 	}
 
 	function groupPostTemp()
@@ -354,11 +363,14 @@ var JobPartTime = (function($) {
                     $('.added-job-form').each(function(i, elem) {
                         //create date range with time input fields
 						DateHelper.rangePicker('.date-range-' + i, 
-                            '.date-range-input-' + i, '.day-time-con-' + i, i);                    	
+                            '.date-range-input-' + i, '.day-time-con-' + i, i);
+                        DateHelper.disabledDayTime();
+                        DateHelper.addTimeRange();
+                        DateHelper.removeTimeRange();              	
                     });
 
                     validation();
-
+                    removeSaveAddMore();
                     captureFormInputVal();
                 },
                 error: function(response) {
@@ -391,7 +403,7 @@ var JobPartTime = (function($) {
                 });
 
                 validation();
-                
+                removeSaveAddMore();
                 captureFormInputVal();
             });
 
@@ -489,6 +501,8 @@ var JobPartTime = (function($) {
                         
                         Helper.number('.number-only');
 
+                        removeSaveAddMore();
+                        
                         captureFormInputVal();
 
                         formID++;
@@ -497,10 +511,12 @@ var JobPartTime = (function($) {
         });
 	}
 
-	function removeSaveAddMore(elem) 
+	function removeSaveAddMore() 
 	{
-        if ($('.added-job-form').length > 1)
-		  $(elem).parent().parent().remove();
+        $('.btn-remove-added-form').on('click', function() {
+            if ($('.added-job-form').length > 1)
+                $(this).parent().parent().remove();
+        });
 	}
 
     //use to create fileuploader

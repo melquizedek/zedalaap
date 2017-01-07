@@ -29,6 +29,9 @@ var JobTemporary = (function ($) {
     {
         $(".panel-heading").on("click", "#btn-group-job", jobGroupPosting);
         $(".panel-heading").on("click", "#btn-single-job", jobSinglePosting);
+        
+        $(".btn-job-group-post").on("click", ".btn-save-more-addmore", addSaveAddMore);
+
         $(".add-new-job-con").on('submit',"form[name=add-new-job-form]", preview);
     }
 
@@ -123,9 +126,19 @@ var JobTemporary = (function ($) {
 	}
 
     function loadPreviewTemp(previewTempData) {
+
         getTemplate('preview.html', function(template) {
+            
             var renderedTemp = template(previewTempData)
+
             $('.temporary-preview-con').html(renderedTemp);
+
+            $('.btn-post').on('click', function() {
+                posting($(this));
+            });
+
+            previewBack();
+            
         }, baseTemplateUrl);
     }
 
@@ -203,8 +216,10 @@ var JobTemporary = (function ($) {
 
 	function previewBack() 
 	{
-		$('.temporary-preview-con').hide();
-		$('.add-new-job-con').show();
+        $('.btn-preview-back').on('click', function() {
+            $('.temporary-preview-con').hide();
+            $('.add-new-job-con').show();
+        });
 	}
 
 	function jobGroupTemp()
@@ -311,7 +326,7 @@ var JobTemporary = (function ($) {
                     DateHelper.disabledDayTime();
 
                     Helper.number('.number-only');
-
+                    removeSaveAddMore();
                     captureFormInputVal();
                 },
                 error: function(response) {
@@ -337,7 +352,7 @@ var JobTemporary = (function ($) {
                 $('.datepicker').datepicker();
 
                 Helper.number('.number-only');
-
+                removeSaveAddMore();
                 captureFormInputVal();
 
             }, baseTemplateUrl);
@@ -430,6 +445,8 @@ var JobTemporary = (function ($) {
 
                         Helper.number('.number-only');
 
+                        removeSaveAddMore();
+
                         captureFormInputVal();
 
                         formID++;
@@ -439,10 +456,12 @@ var JobTemporary = (function ($) {
         });
     }
 
-    function removeSaveAddMore(elem) 
+    function removeSaveAddMore() 
     {
-        if ($('.added-job-form').length > 1)
-            $(elem).parent().parent().remove();
+        $('.btn-remove-added-form').on('click', function() {
+            if ($('.added-job-form').length > 1)
+                $(this).parent().parent().remove();  
+        });
     }
 
     //use to create fileuploader

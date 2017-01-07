@@ -94,8 +94,7 @@
 											            Cancel
 											        </a>
 											        <a href="javascript:void(0);" 
-											        	class="btn btn-primary btn-save-more-addmore"
-											            onclick="JobTemporary.addSaveAddMore();">
+											        	class="btn btn-primary btn-save-more-addmore">
 											            Save & Add more
 											        </a>
 											        <button type="submit" class="btn btn-primary btn-preview" 

@@ -647,47 +647,66 @@ var DateHelper = (function($) {
  		return mnames[month];
 	}
 
-	function removeTimeRange(elem, timeInputCon)
+	function removeTimeRange()
 	{
-		if ($(timeInputCon).length >  1)
-			$(elem).remove();
+		console.log('run for edit');
+		$('.btn-time-remove').on('click', function() {
+			var $this = $(this);
+			var formId = $this.data('options').formId;
+			var timeStamp = $this.data('options').timeStamp;
+			var appendId = $this.data('options').appendId;
+
+			//console.log($('.time-input-' + formId + '-' + timeStamp).length, $('.time-input-con-' + appendId).length);
+
+			if ($('.time-input-' + formId + '-' + timeStamp).length >  1)
+				$('.time-input-con-' + appendId).remove();
+		});
 	}
 
-	function addTimeRange(formId, timeStamp, 
-		timeInputConClass, date, dateStr, day) {
-		
-		var lastFrom = $('.time-input-from-' + formId + '-' + timeStamp).last();
-		var lastTo = $('.time-input-to-' + formId + '-' + timeStamp).last();
-		
-		//console.log(lastFrom.val().length, lastTo.val().length);
+	function addTimeRange() {
+		console.log('run for edit');
+		$('.btn-add-newsched').on('click', function() {
+			
+			var $this = $(this);
 
-		lastFrom.css('border-color', '');
-		lastTo.css('border-color', '');
-		if (!lastFrom.val().length || !lastTo.val().length) {
-			lastFrom.css('border-color', 'red');
-			lastTo.css('border-color', 'red');
-			return false;
-		}
+			var formId = $this.data('options').formId;
+			var timeStamp = $this.data('options').timeStamp;
+			var date = $this.data('options').label;
+			var dateStr = $this.data('options').dateStr;
+			var day = $this.data('options').day;
+			var timeInputConClass = '.time-input-' + formId + '-' + timeStamp;
+			var lastFrom = $('.time-input-from-' + formId + '-' + timeStamp).last();
+			var lastTo = $('.time-input-to-' + formId + '-' + timeStamp).last();
+			
+			lastFrom.css('border-color', '');
+			lastTo.css('border-color', '');
 
-		var timeInputConClass = $(timeInputConClass).last();
-		var addedDateRangeTemp = _.template($('#added-date-range-temp').html());
-		
-		addedDateRangeTemp = addedDateRangeTemp({
-				formId: formId,
-				timeStamp: timeStamp,
-				addedTimeId: addedTimeId,
-				date: date,
-				dateStr: dateStr,
-				day: day
-			});
+			if (!lastFrom.val().length || !lastTo.val().length) {
+				lastFrom.css('border-color', 'red');
+				lastTo.css('border-color', 'red');
+				return false;
+			}
 
-		timeInputConClass.after(addedDateRangeTemp);
+			var timeInputConClass = $(timeInputConClass).last();
+			var addedDateRangeTemp = _.template($('#added-date-range-temp').html());
+			
+			addedDateRangeTemp = addedDateRangeTemp({
+					formId: formId,
+					timeStamp: timeStamp,
+					addedTimeId: addedTimeId,
+					date: date,
+					dateStr: dateStr,
+					day: day
+				});
 
-		Helper.time('.time-only');
+			timeInputConClass.after(addedDateRangeTemp);
 
-		captureFormInputVal();
+			Helper.time('.time-only');
+			removeTimeRange();
+			captureFormInputVal();
 
-		addedTimeId++;
+			addedTimeId++;
+		});
 	}
 
 	function rangePicker(selector1, selector2, dayTimeCon, 
@@ -738,29 +757,30 @@ var DateHelper = (function($) {
 			Template.get('#date-range-input-temp', dayTimeCon, tempData);
 
 			disabledDayTime();
-
+			addTimeRange();
+			removeTimeRange();
 			Helper.time('.time-only');
-
 			captureFormInputVal();
 	    });
 
 	    return datePicker;
 	}
 
-	function disabledDayTime(elem, formId, timestamp)
+	function disabledDayTime()
 	{
-		var checkbox = $(elem);
+		$('.time-input-enable').on('click', function() {
+			var $this = $(this);
+			var formId = $this.data('options').formId;
+			var timestamp = $this.data('options').timeStamp;
+			var inputs = $('.time-input-' + formId + '-' + timestamp).find(':input');
 
-//		console.log(formId, timestamp);
-
-		var inputs = $('.time-input-' + formId + '-' + timestamp).find(':input');
-
-		inputs.removeAttr('disabled');
-		
-		if (!checkbox.is(':checked'))
-		{
-			inputs.attr('disabled', true);
-		}
+			inputs.removeAttr('disabled');
+			
+			if (!$this.is(':checked'))
+			{
+				inputs.attr('disabled', true);
+			}
+		});
 	}
 
 	function getDateStr(date, type) {
@@ -983,8 +1003,7 @@ function createSearchKeys(jobGroups, jobPostId)
 						 	var tempData = {
 						 		type: "",
 						 		applicants: [],
-						 		job: serverResponse.job_details,
-								backCallback: "$('.applicant-view-con').empty();$('.jobs-list').show();"
+						 		job: serverResponse.job_details
 							};
 
 							var numOfShortListed = applicants.shortListedApplicant.length;
@@ -997,7 +1016,7 @@ function createSearchKeys(jobGroups, jobPostId)
 									tempData.type = "shortlisted";
 									tempData.applicants = applicants.shortListedApplicant;
 									Template.get(viewTemplate, viewTemplateCon, tempData);
-									console.log(tempData);
+									back();
 								});
 							
 							if (numOfShortListed) {
@@ -1009,13 +1028,12 @@ function createSearchKeys(jobGroups, jobPostId)
 							currentAppliedBtnViews
 								.text("View " + numOfApplied + " Applicants")
 								.on('click', function() {
-									
-									console.log(serverResponse.job_details, applicants.applicantsApplied);
-									
+									//console.log(serverResponse.job_details, applicants.applicantsApplied);
 									domToHide.hide();
 									tempData.type = "applied";
 									tempData.applicants = applicants.applicantsApplied;
 									Template.get(viewTemplate, viewTemplateCon, tempData);
+									back();
 								});
 
 							if (numOfApplied) {
@@ -1023,7 +1041,6 @@ function createSearchKeys(jobGroups, jobPostId)
 							}
 								
 						}
-
 					},
 					error: function(response) {
 						console.log("Ajax Request Failed : ", response)
@@ -1033,6 +1050,14 @@ function createSearchKeys(jobGroups, jobPostId)
 					
 				});
 
+			});
+		}
+
+		function back()
+		{
+			$('.applicant-view-back').on('click', function() {
+				$('.applicant-view-con').empty();
+				$('.jobs-list').show();
 			});
 		}
 
@@ -1308,13 +1333,16 @@ function saveAddMoreAlertMsg()
 			title: 'Alert!',
 	        message: "<h5>Please fill up required fields before adding more job position.</h5>",
 	        okBtn: "Check Required Fields",
-	        backFunction: 'gotoTop()',
-	        closeFunction: null,
 	        closeBtn: "Close",
 		});
 
 		$('.alert-msg-temp-con').html(renderedtemp);
+		
 		$('.alert-msg').modal('show');
+
+		$('.btn-modal-back').on('click', function() {
+			gotoTop();
+		});
 
 	}, 'template/job/');
 }

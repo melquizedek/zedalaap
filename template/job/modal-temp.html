@@ -12,15 +12,13 @@
       </div>
       <div class="modal-footer">
         <% if (okBtn) { %>
-        <button type="button" class="btn btn-primary" 
-            onclick="<%=backFunction%>;" data-dismiss="modal">
-            <%=okBtn%></button>
+        <button type="button" 
+            class="btn btn-primary btn-modal-back" 
+            data-dismiss="modal"><%=okBtn%></button>
         <% } %>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" 
-                <% if(closeFunction) { %> 
-                    onclick="<%= closeFunction %>" 
-                <% } %>
-            ><%= (closeBtn) ? closeBtn : 'Continue' %>    
+        <button type="button" 
+            class="btn btn-primary btn-modal-close" data-dismiss="modal" >
+            <%= (closeBtn) ? closeBtn : 'Continue' %>    
         </button>
       </div>
     </div><!-- /.modal-content -->

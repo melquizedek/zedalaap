@@ -80,9 +80,9 @@ class JobController
 		return $response->withStatus(200)->withJson($result);
 	}
 
-	public function postJob($request, $response, $args) {
-
-		$formData = $request->getParsedBody();
+	public function postJob($request, $response, $args) 
+	{
+		$formData = $request->getParams();
 		
 		$result = array(
 			'success' => false,
@@ -254,7 +254,7 @@ class JobController
 			'data' => array(),
 		);
 
-		$postData = $request->getParsedBody();
+		$postData = $request->getParams();
 		$jobPostId = $postData['job_post_id'];
 		
 		$queryResults = $this->Job->getApplicantApplied("", 
@@ -310,7 +310,7 @@ class JobController
 			'data' => array(),
 		);
 
-		$postData = $request->getParsedBody();
+		$postData = $request->getParams();
 
 		$searchKeys = str_replace(array('[', ']', '"'), 
 			"", $this->JobHelper->sanitize($postData['searchKeys']));
@@ -329,7 +329,7 @@ class JobController
 
 	public function jobList($request, $response, $args) 
 	{
-		$postData = $request->getParsedBody();
+		$postData = $request->getParams();
 		
 		$employment_type_id = $postData['employment_type_id'];
 
@@ -448,7 +448,7 @@ class JobController
 	{
 		$result = array('success' => false, 'data' => null);
 
-		$postData = $request->getParsedBody();
+		$postData = $request->getParams();
 
 		$json_file_id = $postData['json_file_id'];	
 		$group_job_id = $postData['job_group_id'];
@@ -494,7 +494,7 @@ class JobController
 		$result = array('success' => false, 
 			'data' => "Server could not process your request..please try later.");
 		
-		$postData = $request->getParsedBody();
+		$postData = $request->getParams();
 		
 		$updatedSuccess = false;
 
